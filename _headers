@@ -1,0 +1,18 @@
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://cloud.umami.is https://api-gateway.umami.dev; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests
+
+/s2/*
+  Cache-Control: public, max-age=86400
+
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/marcas/*
+  Cache-Control: public, max-age=604800
+
+/d/*
+  Cache-Control: public, max-age=3600

@@ -1,0 +1,40 @@
+<!doctype html><html lang="es-AR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Botón de arrepentimiento | Materiales MDZ</title>
+<meta name="description" content="Arrepentite de tu compra dentro de los 10 días, sin costo."><meta name="robots" content="index,follow">
+<style>@font-face{font-family:'Barlow Condensed';font-weight:800;font-display:swap;src:url(fonts/barlowcondensed-800.woff2) format('woff2')}@font-face{font-family:Barlow;font-weight:400;font-display:swap;src:url(fonts/barlow-400.woff2) format('woff2')}@font-face{font-family:Barlow;font-weight:600;font-display:swap;src:url(fonts/barlow-600.woff2) format('woff2')}@font-face{font-family:Barlow;font-weight:700;font-display:swap;src:url(fonts/barlow-700.woff2) format('woff2')}</style>
+<style>
+:root{--navy:#0C2238;--yellow:#FFC20E;--bg:#EEF1F4;--surface:#fff;--ink:#0C1A2A;--muted:#5B6B7E;--line:#DDE3EA;--wa:#15803D}
+@media (prefers-color-scheme:dark){:root{--bg:#08131F;--surface:#0F1E2F;--ink:#E8EEF4;--muted:#93A4B8;--line:#1D3047}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Barlow,Arial,sans-serif}
+header{background:var(--navy);border-bottom:3px solid var(--yellow)}header a{display:inline-block;padding:16px;color:#fff;text-decoration:none;font:800 22px "Barlow Condensed",Arial,sans-serif;letter-spacing:.3px}
+header small{display:block;font:600 10px Barlow,sans-serif;letter-spacing:1.3px;color:var(--yellow)}
+main{max-width:760px;margin:0 auto;padding:28px 16px 60px}
+h1{font:800 clamp(30px,5vw,42px)/1 "Barlow Condensed",Arial,sans-serif;text-transform:uppercase;margin:6px 0 16px}
+h2{font-size:18px;margin:26px 0 6px}p,li{color:var(--ink)}.muted{color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px}
+form{display:grid;gap:12px}label{display:flex;flex-direction:column;gap:4px;font-size:14px;font-weight:600;color:var(--muted)}
+input,textarea{font:inherit;font-size:16px;padding:11px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}
+button,.btn{font:inherit;font-weight:700;font-size:16px;padding:13px 20px;border-radius:10px;border:0;background:var(--yellow);color:var(--navy);cursor:pointer;text-decoration:none;display:inline-block;text-align:center}
+.wa{background:var(--wa);color:#fff}a{color:inherit}footer{text-align:center;padding:24px 16px;color:var(--muted);font-size:14px}
+</style></head><body>
+<header><a href="./">MATERIALES MDZ<small>MATERIALES DE CONSTRUCCIÓN</small></a></header>
+<main>
+<h1>Botón de arrepentimiento</h1>
+<p>Si compraste a distancia (por la web o por WhatsApp), tenés <b>10 días corridos</b> desde que recibiste los productos para arrepentirte de la compra, sin dar explicaciones y sin costo. Completá este formulario y dentro de las <b>24 horas</b> te enviamos por WhatsApp el número de trámite y coordinamos el retiro.</p>
+<div class="card">
+<form name="arrepentimiento" method="POST" action="gracias.html?f=arrepentimiento" data-netlify="true" netlify-honeypot="empresa">
+<input type="hidden" name="form-name" value="arrepentimiento">
+<p hidden><label>No completar <input name="empresa" tabindex="-1" autocomplete="off"></label></p>
+<label>Nombre y apellido<input name="nombre" autocomplete="name" required></label>
+<label>Celular<input name="celular" type="tel" inputmode="tel" autocomplete="tel" required></label>
+<label>DNI o CUIT de quien compró<input name="documento" required></label>
+<label>Fecha de la compra o de la entrega<input name="fecha" type="date" required></label>
+<label>Productos que querés devolver<textarea name="productos" rows="4" required></textarea></label>
+<label>Comentario (opcional)<textarea name="comentario" rows="3"></textarea></label>
+<button type="submit">Enviar pedido de arrepentimiento</button>
+</form>
+</div>
+<p class="muted">También podés pedirlo por <a href="https://wa.me/5492615390821?text=Hola%20MDZ%2C%20quiero%20usar%20el%20bot%C3%B3n%20de%20arrepentimiento.">WhatsApp</a>.</p></main>
+<footer><a href="./">Volver al catálogo</a> · <a href="privacidad.html">Privacidad</a> · <a href="arrepentimiento.html">Botón de arrepentimiento</a></footer>
+<script src="vendedor.js" defer></script>
+</body></html>
