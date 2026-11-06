@@ -1789,7 +1789,18 @@ function vidsForProduct(V,p){const L=V[vkey(p[1])]||[];if(!L.length)return {t:''
  const own=L.filter(v=>{const k=toks(v[2]);return k.length&&k.every(w=>nm.includes(w))});
  if(own.length)return {t:'Videos de este producto',l:own.slice(0,3)};
  const lv=L.filter(v=>!v[3]);return {t:'Videos de la marca '+p[1],l:(lv.length?lv:L).slice(0,3)}}
-async function showPVids(i){const p=CAT.p[i];const V=await getVids();if(location.hash!=='#p-'+i||!$('pv-vid'))return;const r=vidsForProduct(V,p);
+const BV={};let VIX=null;
+const vix=()=>VIX||(VIX=fetch('videos/b/indice.json').then(r=>r.json()).catch(()=>({})));
+async function brandAll(k){const ix=await vix();const sl=ix[k];if(!sl)return[];return BV[k]||(BV[k]=fetch('videos/b/'+sl+'.json').then(r=>r.json()).catch(()=>[]))}
+const GENW=new Set('para con sin blanco blanca negro negra gris cromo cromado cromada acero inox inoxidable simple doble juego modelo linea serie tipo metro metros unidad pack color colores varios medida nuevo nueva plus premium agua pvc rosca hembra macho reforzado liviano tubo desague bano cocina sistema completo pedido cuadrado redondo largo corto alta baja chico grande mini universal standard estandar'.split(' '));
+function ptoks(p){const bw=norm(p[1]||'').split(/\s+/);return [...new Set(norm(p[0]).split(/[^a-z0-9ñ]+/).filter(w=>w.length>=4&&!/\d/.test(w)&&!GENW.has(w)&&!bw.includes(w)))]}
+async function showPVids(i){const p=CAT.p[i];const k=vkey(p[1]);const [V,all]=await Promise.all([getVids(),brandAll(k)]);if(location.hash!=='#p-'+i||!$('pv-vid'))return;
+ const ty=ptype(p),tk=ptoks(p);
+ const sc=all.map(v=>{const t=' '+norm(v[1]).replace(/[^a-z0-9ñ]+/g,' ')+' ';let s=0,strong=0;tk.forEach(w=>{const st=w.replace(/(es|s)$/,'');if(t.includes(' '+w+' ')||t.includes(' '+w+'s ')||t.includes(' '+w+'es ')||(st.length>=5&&t.includes(' '+st))){s+=w===ty?1:2;if(w!==ty)strong++}});return [v,s,strong]})
+  .filter(x=>x[2]>0&&x[1]>=2).sort((a,b)=>b[1]-a[1]);
+ let r;
+ if(sc.length)r={t:'Videos de este producto',l:sc.slice(0,3).map(x=>x[0])};
+ else{const L=V[k]||[];const lv=L.filter(v=>!v[3]);r={t:p[1]?'Videos de la marca '+p[1]:'',l:(lv.length?lv:L).slice(0,3)}}
  if(!r.l.length){$('pv-vid').hidden=true;return}$('pv-vid-h').textContent=r.t;$('pv-vids').innerHTML=r.l.map(ytCard).join('');$('pv-vid').hidden=false}
 async function showBrandVids(){const box=$('bvids');if(!box)return;if(st.b.size!==1||st.q){box.hidden=true;return}
  const k=[...st.b][0];const V=await getVids();const L=(V[vkey(k)]||[]).filter(v=>!v[3]).slice(0,4);
