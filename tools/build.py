@@ -20,6 +20,7 @@ for ri, row in enumerate(R):
     row[3] = sorted([[S[ri][si], cs[(ri, si)]] for si in range(len(S[ri])) if cs[(ri, si)]], key=lambda x: -x[1])
 s = s[:i] + json.dumps(R, ensure_ascii=False) + s[end:]
 s = re.sub(r"const DV='\d+'", "const DV='%s'" % time.strftime('%Y%m%d%H%M'), s, count=1)
+s = s.replace('https://mdzmaterialesdeconstruccion.netlify.app', BASE)  # dominio propio automático
 open(ix, 'w', encoding='utf-8').write(s)
 subprocess.run([sys.executable, os.path.join(SITE, 'tools', 'gen_seo.py'), SITE, BASE], check=True)
 print('listo', BASE, sum(cr.values()), 'productos visibles')
