@@ -41,3 +41,30 @@
     e.preventDefault();ask(a);
   },true);
 })();
+
+/* MDZ: redes sociales. Para agregar o cambiar una red, completá su "url" acá (vacía = no se muestra).
+   Se dibujan en cada elemento con data-redes, y al pie de todas las páginas que no tengan uno. */
+(function(){
+  var REDES=[
+    {n:'Instagram',url:'https://www.instagram.com/materialesenmdz/',d:'M12 7.2a4.8 4.8 0 1 0 0 9.6 4.8 4.8 0 0 0 0-9.6zm0 7.9a3.1 3.1 0 1 1 0-6.2 3.1 3.1 0 0 1 0 6.2zM17 5.8a1.1 1.1 0 1 0 0 2.3 1.1 1.1 0 0 0 0-2.3zM12 3.6c2.7 0 3 0 4.1.1 2.8.1 4.1 1.4 4.2 4.2.1 1.1.1 1.4.1 4.1s0 3-.1 4.1c-.1 2.8-1.4 4.1-4.2 4.2-1.1.1-1.4.1-4.1.1s-3 0-4.1-.1c-2.8-.1-4.1-1.4-4.2-4.2C3.6 15 3.6 14.7 3.6 12s0-3 .1-4.1C3.8 5.1 5.1 3.8 7.9 3.7 9 3.6 9.3 3.6 12 3.6zM12 2C9.3 2 8.9 2 7.9 2.1 4.2 2.2 2.2 4.2 2.1 7.9 2 8.9 2 9.3 2 12s0 3.1.1 4.1c.1 3.7 2.2 5.7 5.8 5.8 1 .1 1.4.1 4.1.1s3.1 0 4.1-.1c3.7-.1 5.7-2.2 5.8-5.8.1-1 .1-1.4.1-4.1s0-3.1-.1-4.1c-.1-3.7-2.1-5.7-5.8-5.8C15.1 2 14.7 2 12 2z'},
+    {n:'Facebook',url:'',d:'M13.4 21.9v-7.4h2.5l.4-2.9h-2.9V9.8c0-.8.2-1.4 1.4-1.4h1.6V5.8c-.3 0-1.2-.1-2.3-.1-2.2 0-3.8 1.4-3.8 3.9v2.1H7.8v2.9h2.5v7.4a10 10 0 1 1 3.1 0z'},
+    {n:'TikTok',url:'',d:'M16.6 5.8A4.3 4.3 0 0 1 15.5 3h-3.1v12.4a2.6 2.6 0 1 1-1.8-2.5V9.8a5.7 5.7 0 1 0 4.9 5.6V9.1a7.3 7.3 0 0 0 4.3 1.4V7.4a4.3 4.3 0 0 1-3.2-1.6z'},
+    {n:'YouTube',url:'',d:'M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2C2 8.8 2 12 2 12s0 3.2.4 4.8a2.5 2.5 0 0 0 1.8 1.8c1.6.4 7.8.4 7.8.4s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8c.4-1.6.4-4.8.4-4.8s0-3.2-.4-4.8zM10 15V9l5.2 3L10 15z'}
+  ];
+  var A=REDES.filter(function(r){return r.url});if(!A.length)return;
+  function html(lbl){return (lbl?'<span class="mdzr-t">'+lbl+'</span>':'')+A.map(function(r){return '<a class="mdzr-a" href="'+r.url+'" target="_blank" rel="noopener" aria-label="'+r.n+' de Materiales MDZ" title="'+r.n+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+r.d+'"/></svg></a>'}).join('')}
+  function run(){
+    var st=document.createElement('style');
+    st.textContent='.mdzr{display:flex;align-items:center;flex-wrap:wrap;gap:8px}.mdzr-t{font-weight:700;margin-right:4px}'+
+    '.mdzr-a{display:inline-grid;place-items:center;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.12);color:#fff;transition:transform .15s,background .15s}'+
+    '.mdzr-a:hover,.mdzr-a:focus-visible{background:#FFC20E;color:#0F2740;transform:translateY(-2px)}.mdzr-a svg{width:19px;height:19px;fill:currentColor}'+
+    '.mdzr.sm .mdzr-a{width:26px;height:26px}.mdzr.sm svg{width:15px;height:15px}'+
+    '.mdzr.light .mdzr-a{background:#0F2740;color:#fff}.mdzr.light .mdzr-a:hover{background:#FFC20E;color:#0F2740}'+
+    '.mdzr-pie{justify-content:center;padding:14px 16px;background:#0A1C30;color:#9FB0C3;font-size:14px}';
+    document.head.appendChild(st);
+    var els=document.querySelectorAll('[data-redes]');
+    els.forEach(function(e){e.classList.add('mdzr');e.innerHTML=html(e.getAttribute('data-redes'))});
+    if(!els.length){var d=document.createElement('div');d.className='mdzr mdzr-pie';d.innerHTML=html('Seguinos');var f=document.querySelector('footer');(f&&f.parentNode?f.parentNode.insertBefore(d,f.nextSibling):document.body.appendChild(d))}
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
+})();
