@@ -1075,6 +1075,30 @@ body.pmode .marcas{display:none!important}
 .zone-row h3{margin:6px 0 8px!important}
 .zone-row .deps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0}
 @media (max-width:860px){.faq-grid{grid-template-columns:minmax(0,1fr)}.zone.zone-row{grid-template-columns:minmax(0,1fr);gap:16px}.zone-row .deps{grid-template-columns:repeat(2,minmax(0,1fr))}.faq-head{text-align:left}}
+
+/* videos: instructivo y videos de marcas/productos */
+.como-acc{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.vbtn{background:#fff;color:#0F2740;border:2px solid #0F2740;display:inline-flex;align-items:center;gap:10px}
+.vbtn svg{width:26px;height:26px}
+.vmod{position:fixed;inset:0;z-index:9000;background:rgba(6,16,28,.78);display:flex;align-items:center;justify-content:center;padding:16px}
+.vmod[hidden]{display:none}
+.vbox{position:relative;background:#0F2740;border-radius:18px;padding:14px;width:min(440px,100%);max-height:calc(100vh - 32px);display:flex;flex-direction:column;gap:10px}
+.vbox video{width:100%;max-height:calc(100vh - 140px);border-radius:12px;background:#000;object-fit:contain}
+.vtabs{display:flex;gap:8px;padding-right:44px}
+.vtabs button{flex:1;border:0;border-radius:999px;padding:10px 12px;font:700 15px Barlow,sans-serif;background:rgba(255,255,255,.12);color:#fff;cursor:pointer}
+.vtabs button.on{background:#FFC20E;color:#0F2740}
+.vx{position:absolute;right:12px;top:12px;width:38px;height:38px;border-radius:50%;border:0;background:#fff;color:#0F2740;font-size:18px;cursor:pointer}
+.vids{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.yt{position:relative;display:block;width:100%;border:0;padding:0;background:#000;border-radius:14px;overflow:hidden;cursor:pointer;aspect-ratio:16/9;text-align:left}
+.yt img{width:100%;height:100%;object-fit:cover;display:block;opacity:.88}
+.yt .pl{position:absolute;left:50%;top:50%;width:64px;height:46px;margin:-23px 0 0 -32px;background:#E5484D;border-radius:12px;display:grid;place-items:center}
+.yt .pl::after{content:"";border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:4px}
+.yt .tt{position:absolute;left:0;right:0;bottom:0;padding:24px 12px 10px;background:linear-gradient(transparent,rgba(0,0,0,.85));color:#fff;font:600 14px/1.25 Barlow,sans-serif}
+.yt iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.pv-vid{margin-top:34px}
+.pv-vid h2{font-size:clamp(26px,3vw,36px);font-weight:800;text-transform:uppercase;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:14px}
+.bvids{margin:0 0 22px}.bvids h3{font-size:22px;font-weight:800;text-transform:uppercase;margin-bottom:10px}
+.bvids .vids{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
 </style>
 
 <div class="topbar"><div class="wrap"><span>Envío a domicilio en <b>todo Gran Mendoza</b>, en 24 a 48 h hábiles</span><span class="tb-r"><span>Lunes a sábado de 8 a 20</span><a href="https://wa.me/5492615390821?text=Hola%20MDZ%2C%20quiero%20pedir%20un%20presupuesto." target="_blank" rel="noopener">WhatsApp 261 539-0821</a></span></div></div>
@@ -1107,7 +1131,7 @@ body.pmode .marcas{display:none!important}
 
 <section class="sec steps-band" id="como"><div class="wrap">
  <div class="sec-h"><div><div class="eyebrow" style="color:#0F2740">Cómo comprar</div><h2>Sin moverte de la obra</h2><p>Sin local y sin vueltas: todo se resuelve por WhatsApp.</p></div>
- <a class="btn" style="background:#0F2740;color:#fff" href="https://wa.me/5492615390821?text=Hola%20MDZ%2C%20quiero%20pedir%20un%20presupuesto." target="_blank" rel="noopener">Empezar ahora</a></div>
+ <div class="como-acc"><button type="button" class="btn vbtn" id="vidbtn"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#0F2740"/><path d="M10 8l6 4-6 4z" fill="#FFC20E"/></svg>Ver cómo funciona</button><a class="btn" style="background:#0F2740;color:#fff" href="https://wa.me/5492615390821?text=Hola%20MDZ%2C%20quiero%20pedir%20un%20presupuesto." target="_blank" rel="noopener">Empezar ahora</a></div></div>
  <div class="steps">
   <div class="step"><h3>Mandá tu lista</h3><p>Escrita, en foto o la que te pasó tu plomero, gasista o arquitecto.</p></div>
   <div class="step"><h3>Te cotizamos</h3><p>Te pasamos el presupuesto completo con el envío incluido, en el día.</p></div>
@@ -1238,6 +1262,7 @@ frame(0);requestAnimationFrame(loop);
    <div class="tabs" id="tabs" role="tablist" aria-label="Rubros"></div>
    <div class="subs" id="subs"></div>
    <div class="toolbar"><div class="actf" id="actf"></div><label class="sortl" for="sort">Ordenar<select id="sort"><option value="rel">Relevancia</option><option value="az">Nombre A–Z</option><option value="za">Nombre Z–A</option><option value="brand">Marca A–Z</option></select></label></div>
+   <div class="bvids" id="bvids" hidden><h3 id="bvids-h"></h3><div class="vids" id="bvids-l"></div></div>
    <div class="grid" id="grid"></div>
    <div style="text-align:center;margin-top:22px"><button class="btn btn-y" id="more" hidden>Ver más productos</button></div>
   </div>
@@ -1277,6 +1302,11 @@ frame(0);requestAnimationFrame(loop);
 
 <footer><div class="wrap"><div class="ft"><div><a class="brand" href="#inicio"><span><b>MATERIALES MDZ</b><small>MATERIALES DE CONSTRUCCIÓN</small></span></a><p>Venta online de materiales de construcción con envío a domicilio. Sin local: armás tu pedido acá y te lo cotizamos por WhatsApp.</p></div><div><h2 class="fth">Comprar</h2><ul><li><a href="#explorar">Catálogo</a></li><li><a href="#como">Cómo comprar</a></li><li><a href="#kits">Presupuesto por obra</a></li><li><a href="#preguntas">Preguntas frecuentes</a></li></ul></div><div><h2 class="fth">Zona de entrega</h2><ul><li>Capital</li><li>Godoy Cruz</li><li>Guaymallén</li><li>Las Heras</li><li>Maipú</li><li>Luján de Cuyo</li></ul></div><div><h2 class="fth">Contacto</h2><ul><li><a href="https://wa.me/5492615390821?text=Hola%20MDZ%2C%20quiero%20pedir%20un%20presupuesto." target="_blank" rel="noopener">WhatsApp 261 539-0821</a></li><li><a href="https://www.instagram.com/materialesenmdz/" target="_blank" rel="noopener">Instagram @materialesenmdz</a></li><li>Lunes a sábado de 8 a 20</li></ul></div></div><div class="ft-b"><span>© Materiales de Construcción MDZ · Mendoza, Argentina</span><span class="ft-legal"><a href="arrepentimiento.html"><b>Botón de arrepentimiento</b></a><a href="privacidad.html">Política de privacidad</a><a href="https://www.argentina.gob.ar/produccion/defensadelconsumidor/formulario" target="_blank" rel="noopener">Defensa de las y los Consumidores. Para reclamos ingrese aquí</a></span></div></div></footer>
 
+<div class="vmod" id="vmod" hidden role="dialog" aria-modal="true" aria-label="Videos: cómo funciona MDZ"><div class="vbox">
+ <button type="button" class="vx" id="vx" aria-label="Cerrar">✕</button>
+ <div class="vtabs"><button type="button" class="on" data-v="como-trabajamos">Cómo trabajamos</button><button type="button" data-v="como-usar-la-web">Cómo usar la página</button></div>
+ <video id="vplay" controls playsinline preload="none" poster="videos/como-trabajamos.jpg"><source src="videos/como-trabajamos.mp4" type="video/mp4"></video>
+</div></div>
 <div class="ov" id="ov3" hidden style="justify-content:flex-start;padding:0"><aside class="drawer left" role="dialog" aria-modal="true" aria-label="Rubros"><header><h3>Filtros</h3><button class="xbtn" style="position:static" id="sclose" aria-label="Cerrar">✕</button></header><div class="litems"><div class="side-list" id="sidedrawer"></div><div id="facetsdrawer"></div></div><footer style="padding:12px 18px;border-top:1px solid var(--line)"><button class="btn btn-y" id="sapply" style="width:100%;justify-content:center">Ver productos</button></footer></aside></div>
 <button class="listbtn" id="listbtn" hidden>Mi lista (0)</button>
 <div class="ov" id="ov" hidden><div class="mdl" role="dialog" aria-modal="true" aria-labelledby="m-name" id="mdl"></div></div>
@@ -1363,7 +1393,7 @@ function drawActive(){const ch=[];if(st.q)ch.push(['q','',`“${st.q}”`]);if(s
   const n=st.b.size+st.m.size+(st.r>=0?1:0)+(st.s?1:0);$('fcount').textContent=n?`(${n})`:''}
 /* MDZ v2: la tarjeta tiene un botón para abrir la ficha y otro para agregar a la lista */
 function card(p,i){let inL=false;try{inL=LIST.some(x=>x.i===i)}catch(e){}return `<div class="pc${inL?' in-list':''}" data-i="${i}"><a class="pc-o" href="${purl(i)}"><div class="pbox"><div class="pimg" data-spr="${i}"></div></div><div class="pi"><span class="br">${esc(p[1]||'')}</span><span class="nm">${esc(p[0])}</span><span class="ad">Ver detalle</span></div></a><button type="button" class="pc-add" data-add="${i}" aria-label="Agregar ${esc(p[0])} a mi lista"><span class="pa-p" aria-hidden="true">+</span><span class="pa-t">Agregar</span></button></div>`}
-function render(keep){if(typeof syncCover==='function')syncCover();
+function render(keep){if(typeof syncCover==='function')syncCover();if(typeof showBrandVids==='function')showBrandVids();
   document.querySelectorAll('#cat .rl').forEach(b=>b.classList.toggle('on',+b.dataset.r===st.r));
   if($('sidebar'))drawSide();
   [...$('tabs').children].forEach(b=>b.setAttribute('aria-selected',+b.dataset.r===st.r));
@@ -1420,12 +1450,14 @@ async function showP(i){const p=CAT.p[i];if(!p){location.hash='explorar';return}
     <ul class="pv-perks"><li>Envío a domicilio en todo Gran Mendoza, en 24 a 48 h hábiles</li><li>Pagás por transferencia, Mercado Pago o efectivo contra entrega</li><li>Te ayudamos a elegir y a armar la lista completa</li></ul>
    </div></div>
   <section class="pv-desc"><h2>Descripción</h2><div class="pv-text" id="pv-desc">Cargando la descripción…</div></section>
+  <section class="pv-vid" id="pv-vid" hidden><h2 id="pv-vid-h">Videos</h2><div class="vids" id="pv-vids"></div></section>
   <section class="pv-sim"><h2>Productos similares</h2><div class="grid" id="pv-sim"></div></section>`;
   const upd=()=>{$('pwa').href=waTo(selTel(),`Hola MDZ, quiero un presupuesto de ${$('pq').value} x ${p[0]}${p[1]?' ('+p[1]+')':''}${codeTxt(i)}.`)};upd();mdzPv(i);
   $('pq').addEventListener('input',upd);$('pqm').onclick=()=>{$('pq').value=Math.max(1,(+$('pq').value||1)-1);upd()};$('pqp').onclick=()=>{$('pq').value=(+$('pq').value||1)+1;upd()};
   $('padd').onclick=()=>{addL(i,+$('pq').value||1);$('padd').textContent='Agregado ✓';setTimeout(()=>{if($('padd'))$('padd').textContent='Agregar a mi lista'},1500)};
   const sim=similar(i);$('pv-sim').innerHTML=sim.length?sim.map(j=>card(CAT.p[j],j)).join(''):`<p style="color:var(--muted)">Consultanos por WhatsApp y te recomendamos opciones.</p>`;
   window.scrollTo(0,0);
+  showPVids(i);
   const d=await descOf(i);if(location.hash==='#p-'+i&&$('pv-desc'))$('pv-desc').innerHTML=d?fmtDesc(d):'<p>Consultanos por WhatsApp y te pasamos la ficha técnica.</p>';
 }
 function hideP(){if(!document.body.classList.contains('pmode'))return;document.body.classList.remove('pmode');$('pview').hidden=true;document.title='Materiales de Construcción MDZ';const h=location.hash.slice(1),el=h&&document.getElementById(h);requestAnimationFrame(()=>{if(el)el.scrollIntoView({block:'start'});else window.scrollTo(0,pvPrevY)})}
@@ -1710,6 +1742,32 @@ document.getElementById('copy').addEventListener('click',async e=>{const b=e.cur
  m.addEventListener('click',e=>{const li=e.target.closest('li[data-b]');if(li)tapgo(li)});
  m.addEventListener('keydown',e=>{const li=e.target.closest('li[data-b]');if(li&&(e.key==='Enter'||e.key===' ')){e.preventDefault();tapgo(li)}});
 })();
+
+/* MDZ: videos (instructivo + YouTube de marcas y productos) */
+(function(){
+ const vm=$('vmod'),vp=$('vplay');
+ const setV=v=>{vp.pause();vp.poster='videos/'+v+'.jpg';vp.innerHTML='<source src="videos/'+v+'.mp4" type="video/mp4">';vp.load();document.querySelectorAll('.vtabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v))};
+ $('vidbtn').onclick=()=>{vm.hidden=false;track('ver_video',{video:'instructivo'})};
+ const close=()=>{vp.pause();vm.hidden=true};
+ $('vx').onclick=close;vm.addEventListener('click',e=>{if(e.target===vm)close()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!vm.hidden)close()});
+ document.querySelector('.vtabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b){setV(b.dataset.v);vp.play().catch(()=>{})}});
+})();
+let VIDS=null;
+const getVids=()=>VIDS||(VIDS=fetch('videos.json').then(r=>r.json()).catch(()=>({})));
+const ytCard=v=>`<button type="button" class="yt" data-id="${v[0]}" aria-label="Ver video: ${esc(v[1])}"><img src="https://i.ytimg.com/vi/${v[0]}/hqdefault.jpg" alt="" loading="lazy"><span class="pl"></span><span class="tt">${esc(v[1])}</span></button>`;
+document.addEventListener('click',e=>{const b=e.target.closest('.yt');if(!b||b.querySelector('iframe'))return;b.insertAdjacentHTML('beforeend',`<iframe src="https://www.youtube-nocookie.com/embed/${b.dataset.id}?autoplay=1&rel=0" title="Video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`);try{track('video_marca',{id:b.dataset.id})}catch(x){}});
+const vkey=b=>{b=bkey(b||'');return b==='johnson acero'?'johnson':b};
+function vidsForProduct(V,p){const L=V[vkey(p[1])]||[];if(!L.length)return {t:'',l:[]};
+ const nm=norm(p[0]);const toks=s=>norm(s).split(/[^a-z0-9]+/).filter(w=>w.length>=3&&!/^(de|con|para|los|las|del|por)$/.test(w));
+ const own=L.filter(v=>{const k=toks(v[2]);return k.length&&k.every(w=>nm.includes(w))});
+ if(own.length)return {t:'Videos de este producto',l:own.slice(0,3)};
+ const lv=L.filter(v=>!v[3]);return {t:'Videos de la marca '+p[1],l:(lv.length?lv:L).slice(0,3)}}
+async function showPVids(i){const p=CAT.p[i];const V=await getVids();if(location.hash!=='#p-'+i||!$('pv-vid'))return;const r=vidsForProduct(V,p);
+ if(!r.l.length){$('pv-vid').hidden=true;return}$('pv-vid-h').textContent=r.t;$('pv-vids').innerHTML=r.l.map(ytCard).join('');$('pv-vid').hidden=false}
+async function showBrandVids(){const box=$('bvids');if(!box)return;if(st.b.size!==1||st.q){box.hidden=true;return}
+ const k=[...st.b][0];const V=await getVids();const L=(V[vkey(k)]||[]).filter(v=>!v[3]).slice(0,4);
+ if(!L.length||st.b.size!==1||[...st.b][0]!==k){box.hidden=true;return}
+ const name=(CAT.p.find(p=>bkey(p[1]||'')===k)||[k])[1]||k;$('bvids-h').textContent='Videos de '+name;$('bvids-l').innerHTML=L.map(ytCard).join('');box.hidden=false}
 })();
 
 </script>
