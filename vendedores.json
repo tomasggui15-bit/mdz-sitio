@@ -1,0 +1,6 @@
+{
+  "principal": {"nombre": "Tomás", "tel": "5492616609480"},
+  "vendedores": {
+    "mauro": {"nombre": "Mauro", "tel": "5492615390821"}
+  }
+}

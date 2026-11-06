@@ -1,44 +1,42 @@
-/* MDZ: antes de abrir WhatsApp, el cliente elige con qué vendedor hablar.
-   Los vendedores se toman de window.MDZ_CONFIG.vendedores (index.html); si no está, se usan estos. */
+/* MDZ: red de vendedores con link propio.
+   - Cada vendedor tiene un link: https://SITIO/v/german  (o cualquier página con ?v=german).
+   - El cliente que entra por ese link queda asignado a ese vendedor por 180 días (si abre el link de otro vendedor, pasa a ese).
+   - TODOS los botones de WhatsApp del cliente van directo al número de su vendedor, y el mensaje lleva el código del vendedor.
+   - Sin link, va al número principal.
+   Los vendedores se cargan en vendedores.json (nombre y teléfono). Los correos y comisiones NO van ahí (el archivo es público). */
 (function(){
-  var DEF=[{nombre:'Tomás',tel:'5492616609480'},{nombre:'Mauro',tel:'5492615390821'}];
-  function vend(){var c=window.MDZ_CONFIG;return (c&&c.vendedores&&c.vendedores.length)?c.vendedores:DEF}
-  var css='.mdzv-ov{position:fixed;inset:0;z-index:9999;background:rgba(6,16,28,.62);display:flex;align-items:center;justify-content:center;padding:16px}'+
-  '.mdzv-ov[hidden]{display:none}'+
-  '.mdzv{background:#fff;color:#0F2740;border-radius:18px;max-width:380px;width:100%;padding:24px 22px 18px;box-shadow:0 24px 60px rgba(0,0,0,.35);font-family:inherit;text-align:center}'+
-  '.mdzv h3{margin:0 0 4px;font-size:22px;font-weight:800;text-transform:uppercase;letter-spacing:.3px}'+
-  '.mdzv p{margin:0 0 16px;color:#5B6B7D;font-size:15px}'+
-  '.mdzv-b{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:0 0 10px;padding:14px 16px;border:0;border-radius:12px;background:#1F8B4C;color:#fff;font:inherit;font-size:17px;font-weight:700;cursor:pointer}'+
-  '.mdzv-b:hover{background:#18733E}.mdzv-b svg{width:22px;height:22px;flex:none}'+
-  '.mdzv-x{background:none;border:0;color:#5B6B7D;font:inherit;font-size:14px;cursor:pointer;padding:6px 10px;text-decoration:underline}';
-  var ICO='<svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.4-.7-2.9-1.1-4.7-4.1-4.9-4.3-.1-.2-1.2-1.6-1.2-3s.7-2.2 1-2.5c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.5.3.1.2.1.7-.1 1.2z"/></svg>';
-  var ov,pend;
-  function build(){
-    if(ov)return;var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
-    ov=document.createElement('div');ov.className='mdzv-ov';ov.hidden=true;
-    ov.innerHTML='<div class="mdzv" role="dialog" aria-modal="true" aria-labelledby="mdzv-t"><h3 id="mdzv-t">¿Con quién querés hablar?</h3><p>Elegí un vendedor y te abrimos WhatsApp.</p><div class="mdzv-l"></div><button type="button" class="mdzv-x">Cancelar</button></div>';
-    document.body.appendChild(ov);
-    ov.addEventListener('click',function(e){
-      var b=e.target.closest('.mdzv-b');
-      if(b){var href=pend&&pend.getAttribute('href')||'';var q=href.indexOf('?');var url='https://wa.me/'+b.getAttribute('data-tel')+(q>=0?href.slice(q):'');
-        try{localStorage.setItem('mdz_vend',b.getAttribute('data-tel'))}catch(x){}
-        close();window.open(url,'_blank','noopener');return}
-      if(e.target===ov||e.target.closest('.mdzv-x'))close()});
-    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!ov.hidden)close()});
+  var DIAS=180, KEY='mdz_ref';
+  var D={principal:{nombre:'Tomás',tel:'5492616609480'},vendedores:{}}, ready=false;
+  function slug(x){return String(x||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9-]/g,'')}
+  function get(){try{var r=JSON.parse(localStorage.getItem(KEY)||'null');if(r&&r.s&&Date.now()-r.t<DIAS*864e5)return r.s}catch(e){}return ''}
+  function set(s){try{localStorage.setItem(KEY,JSON.stringify({s:s,t:Date.now()}))}catch(e){}}
+  function trk(n,d){try{window.umami&&window.umami.track(n,d)}catch(e){}}
+  var nuevo=slug(new URLSearchParams(location.search).get('v'));
+  if(nuevo){set(nuevo);try{var u=new URL(location.href);u.searchParams.delete('v');history.replaceState(history.state,'',u.pathname+u.search+u.hash)}catch(e){}}
+  function actual(){var s=get();var v=s&&D.vendedores[s];return v?{s:s,nombre:v.nombre,tel:String(v.tel).replace(/\D/g,'')}:{s:'',nombre:D.principal.nombre,tel:String(D.principal.tel).replace(/\D/g,'')}}
+  window.MDZ_vendedor=actual;
+  function fmt(t){t=String(t).replace(/^549/,'');return t.length===10?t.slice(0,3)+' '+t.slice(3,6)+'-'+t.slice(6):t}
+  function pintar(){var v=actual();
+    document.querySelectorAll('[data-vnom]').forEach(function(e){e.textContent=v.nombre});
+    document.querySelectorAll('[data-vtel]').forEach(function(e){e.textContent=fmt(v.tel)});
+    document.querySelectorAll('[data-copy][data-vcopy]').forEach(function(e){e.setAttribute('data-copy',v.tel.replace(/^549/,''))});
   }
-  function close(){ov.hidden=true;pend=null}
-  function ask(a){
-    build();var V=vend();
-    ov.querySelector('.mdzv-l').innerHTML=V.map(function(v){return '<button type="button" class="mdzv-b" data-tel="'+String(v.tel).replace(/\D/g,'')+'">'+ICO+'<span>'+String(v.nombre).replace(/[<>&"]/g,'')+'</span></button>'}).join('');
-    pend=a;ov.hidden=false;var f=ov.querySelector('.mdzv-b');if(f)f.focus();
-  }
+  function cargar(){fetch('/vendedores.json',{cache:'no-cache'}).then(function(r){return r.json()}).then(function(j){
+      D.principal=j.principal||D.principal;D.vendedores={};Object.keys(j.vendedores||{}).forEach(function(k){D.vendedores[slug(k)]=j.vendedores[k]});
+      ready=true;pintar();var v=actual();if(nuevo)trk('visita_vendedor',{vendedor:v.s||'sin-vendedor'});
+    }).catch(function(){ready=true})}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){pintar();cargar()});else{pintar();cargar()}
+  /* Reescribe cualquier link de WhatsApp con número al vendedor del cliente */
+  function reescribir(a){var h=a.getAttribute('href')||'';var m=h.match(/^https:\/\/wa\.me\/(\d+)(\?.*)?$/);if(!m)return;
+    var v=actual();var q=new URLSearchParams((m[2]||'').slice(1));var t=q.get('text')||'Hola MDZ, quiero pedir un presupuesto.';
+    if(v.s&&t.indexOf('Código de vendedor')<0)t+='\n\nCódigo de vendedor: '+v.s.toUpperCase();
+    return {url:'https://wa.me/'+v.tel+'?text='+encodeURIComponent(t),v:v}}
   document.addEventListener('click',function(e){
-    if(e.defaultPrevented||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey)return;
-    var a=e.target.closest&&e.target.closest('a[href*="wa.me/"]');if(!a)return;
-    if(/wa\.me\/\?/.test(a.getAttribute('href')||''))return; /* "compartir" sin número: no preguntar */
-    if(a.hasAttribute('data-direct'))return; /* número elegido a mano: no preguntar */
-    if(vend().length<2)return;
-    e.preventDefault();ask(a);
+    if(e.defaultPrevented||e.button!==0)return;
+    var a=e.target.closest&&e.target.closest('a[href^="https://wa.me/"]');if(!a)return;
+    var r=reescribir(a);if(!r)return;
+    a.setAttribute('href',r.url);trk('whatsapp_vendedor',{vendedor:r.v.s||'sin-vendedor'});
+    /* el navegador sigue el link ya corregido */
   },true);
 })();
 

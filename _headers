@@ -25,3 +25,6 @@
 
 /videos/b/*
   Cache-Control: public, max-age=0, must-revalidate
+
+/vendedores.json
+  Cache-Control: public, max-age=0, must-revalidate
