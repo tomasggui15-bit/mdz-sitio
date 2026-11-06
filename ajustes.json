@@ -2,5 +2,11 @@
   "principal": {"nombre": "Tomás", "tel": "5492616609480"},
   "vendedores": {
     "mauro": {"nombre": "Mauro", "tel": "5492615390821"}
+  },
+  "redes": {
+    "instagram": "https://www.instagram.com/materialesenmdz/",
+    "facebook": "",
+    "tiktok": "",
+    "youtube": ""
   }
 }

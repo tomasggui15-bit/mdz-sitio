@@ -3,7 +3,8 @@
    - El cliente que entra por ese link queda asignado a ese vendedor por 180 días (si abre el link de otro vendedor, pasa a ese).
    - TODOS los botones de WhatsApp del cliente van directo al número de su vendedor, y el mensaje lleva el código del vendedor.
    - Sin link, va al número principal.
-   Los vendedores se cargan en vendedores.json (nombre y teléfono). Los correos y comisiones NO van ahí (el archivo es público). */
+   Los vendedores y las redes se cargan en ajustes.json (se edita desde el panel /admin). Los correos y comisiones NO van ahí (el archivo es público). */
+window.MDZ_AJUSTES=fetch('/ajustes.json',{cache:'no-cache'}).then(function(r){return r.json()}).catch(function(){return {}});
 (function(){
   var DIAS=180, KEY='mdz_ref';
   var D={principal:{nombre:'Tomás',tel:'5492616609480'},vendedores:{}}, ready=false;
@@ -21,7 +22,7 @@
     document.querySelectorAll('[data-vtel]').forEach(function(e){e.textContent=fmt(v.tel)});
     document.querySelectorAll('[data-copy][data-vcopy]').forEach(function(e){e.setAttribute('data-copy',v.tel.replace(/^549/,''))});
   }
-  function cargar(){fetch('/vendedores.json',{cache:'no-cache'}).then(function(r){return r.json()}).then(function(j){
+  function cargar(){window.MDZ_AJUSTES.then(function(j){
       D.principal=j.principal||D.principal;D.vendedores={};Object.keys(j.vendedores||{}).forEach(function(k){D.vendedores[slug(k)]=j.vendedores[k]});
       ready=true;pintar();var v=actual();if(nuevo)trk('visita_vendedor',{vendedor:v.s||'sin-vendedor'});
     }).catch(function(){ready=true})}
@@ -49,7 +50,7 @@
     {n:'TikTok',url:'',d:'M16.6 5.8A4.3 4.3 0 0 1 15.5 3h-3.1v12.4a2.6 2.6 0 1 1-1.8-2.5V9.8a5.7 5.7 0 1 0 4.9 5.6V9.1a7.3 7.3 0 0 0 4.3 1.4V7.4a4.3 4.3 0 0 1-3.2-1.6z'},
     {n:'YouTube',url:'',d:'M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2C2 8.8 2 12 2 12s0 3.2.4 4.8a2.5 2.5 0 0 0 1.8 1.8c1.6.4 7.8.4 7.8.4s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8c.4-1.6.4-4.8.4-4.8s0-3.2-.4-4.8zM10 15V9l5.2 3L10 15z'}
   ];
-  var A=REDES.filter(function(r){return r.url});if(!A.length)return;
+  var A;
   function html(lbl){return (lbl?'<span class="mdzr-t">'+lbl+'</span>':'')+A.map(function(r){return '<a class="mdzr-a" href="'+r.url+'" target="_blank" rel="noopener" aria-label="'+r.n+' de Materiales MDZ" title="'+r.n+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="'+r.d+'"/></svg></a>'}).join('')}
   function run(){
     var st=document.createElement('style');
@@ -64,5 +65,6 @@
     els.forEach(function(e){e.classList.add('mdzr');e.innerHTML=html(e.getAttribute('data-redes'))});
     if(!els.length){var d=document.createElement('div');d.className='mdzr mdzr-pie';d.innerHTML=html('Seguinos');var f=document.querySelector('footer');(f&&f.parentNode?f.parentNode.insertBefore(d,f.nextSibling):document.body.appendChild(d))}
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
+  function arrancar(){window.MDZ_AJUSTES.then(function(j){var rd=(j&&j.redes)||{};REDES.forEach(function(r){var k=r.n.toLowerCase();if(k in rd)r.url=rd[k]});A=REDES.filter(function(r){return r.url});if(A.length)run()})}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',arrancar);else arrancar();
 })();

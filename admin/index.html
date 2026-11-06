@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Panel MDZ</title>
+<link rel="icon" href="/favicon.ico">
+<style>
+@font-face{font-family:B;src:url(/fonts/barlow-400.woff2);font-weight:400}
+@font-face{font-family:B;src:url(/fonts/barlow-600.woff2);font-weight:600}
+@font-face{font-family:B;src:url(/fonts/barlow-700.woff2);font-weight:700}
+@font-face{font-family:BC;src:url(/fonts/barlowcondensed-800.woff2);font-weight:800}
+:root{--navy:#0F2740;--navy2:#1B3557;--y:#FFC20E;--g:#1F8B4C;--red:#C8323A;--ink:#14202E;--mut:#5B6B7D;--line:#DCE3EB;--bg:#F1F4F8}
+*{box-sizing:border-box}html,body{margin:0}body{font-family:B,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px}
+button,input,select,textarea{font:inherit}
+.top{background:var(--navy);color:#fff;position:sticky;top:0;z-index:20}
+.top .in{max-width:1200px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.top h1{font-family:BC;font-weight:800;font-size:22px;margin:0;text-transform:uppercase;letter-spacing:.3px}.top h1 span{color:var(--y)}
+.who{margin-left:auto;font-size:13px;color:#B9C6D6;display:flex;gap:10px;align-items:center}
+.tabs{max-width:1200px;margin:0 auto;padding:0 16px;display:flex;gap:4px;overflow-x:auto}
+.tabs button{background:none;border:0;color:#B9C6D6;padding:10px 14px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+.tabs button[aria-selected=true]{color:#fff;border-color:var(--y)}
+main{max-width:1200px;margin:0 auto;padding:16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;background:var(--navy);color:#fff;text-decoration:none}
+.btn.y{background:var(--y);color:var(--navy)}.btn.g{background:var(--g)}.btn.r{background:var(--red)}.btn.l{background:#E7ECF2;color:var(--navy)}
+.btn:disabled{opacity:.5;cursor:default}.btn.sm{padding:6px 10px;font-size:13px;border-radius:8px}
+input,select,textarea{width:100%;padding:10px 12px;border:1px solid #C9D3DF;border-radius:10px;background:#fff}
+textarea{min-height:130px;resize:vertical}
+label{display:block;font-size:13px;font-weight:700;color:var(--mut);margin:12px 0 4px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}.row>*{flex:1 1 180px}
+.muted{color:var(--mut);font-size:13px}
+.pub{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--navy);color:#fff;padding:10px 16px;display:flex;gap:12px;align-items:center;justify-content:center;box-shadow:0 -6px 20px rgba(0,0,0,.25)}
+.pub[hidden]{display:none}.pub b{color:var(--y)}
+body.haspub main{padding-bottom:90px}
+.list{display:flex;flex-direction:column;gap:6px}
+.it{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 10px;cursor:pointer;text-align:left;width:100%}
+.it:hover{border-color:var(--navy2)}
+.th{width:56px;height:56px;border-radius:8px;background:#F6F8FB center/contain no-repeat;border:1px solid var(--line)}
+.th.spr{background-size:500% 500%;background-repeat:no-repeat}
+.it b{display:block;font-weight:600;line-height:1.25}.it small{color:var(--mut)}
+.tag{display:inline-block;font-size:11px;font-weight:700;border-radius:99px;padding:2px 8px;margin:2px 2px 0 0;background:#E7ECF2;color:var(--navy)}
+.tag.no{background:#FDECEC;color:var(--red)}.tag.ed{background:#FFF4CC;color:#7A5A00}.tag.ok{background:#E3F4EA;color:var(--g)}
+.ov{position:fixed;inset:0;background:rgba(6,16,28,.6);z-index:40;display:flex;justify-content:flex-end}.ov[hidden]{display:none}
+.side{background:#fff;width:min(560px,100%);height:100%;overflow:auto;padding:18px 18px 100px;box-shadow:-10px 0 30px rgba(0,0,0,.3)}
+.side h2{font-family:BC;font-weight:800;text-transform:uppercase;margin:0 0 4px;font-size:24px}
+.big{width:100%;aspect-ratio:1;max-height:280px;border-radius:12px;border:1px solid var(--line);background:#F6F8FB center/contain no-repeat}
+.big.spr{background-size:500% 500%}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.login{max-width:440px;margin:60px auto;text-align:center}
+.login h2{font-family:BC;font-weight:800;font-size:30px;text-transform:uppercase;margin:0 0 6px}
+.toast{pointer-events:none;position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;z-index:60;max-width:90%;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.toast[hidden]{display:none}
+table{width:100%;border-collapse:collapse}td,th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}th{font-size:12px;color:var(--mut);text-transform:uppercase}
+.vlink{font-family:ui-monospace,monospace;font-size:12px;word-break:break-all;color:var(--navy2)}
+.subs input{margin-bottom:6px}
+.pager{display:flex;gap:8px;justify-content:center;margin:12px 0}
+details summary{cursor:pointer;font-weight:700}
+</style></head><body>
+<div class="top"><div class="in"><h1>Panel <span>MDZ</span></h1><div class="who" id="who" hidden><span id="whoname"></span><a class="btn sm l" href="/" target="_blank" rel="noopener">Ver la web</a><button class="btn sm l" id="logout">Salir</button></div></div>
+<div class="tabs" id="tabs" role="tablist" hidden>
+ <button role="tab" data-t="prod" aria-selected="true">Productos</button>
+ <button role="tab" data-t="cat" aria-selected="false">Categorías</button>
+ <button role="tab" data-t="vend" aria-selected="false">Vendedores</button>
+ <button role="tab" data-t="redes" aria-selected="false">Redes</button>
+</div></div>
+
+<main>
+<section id="login" class="login card" hidden>
+ <h2>Panel de administrador</h2>
+ <p class="muted">Solo la cuenta de GitHub dueña de la web puede guardar cambios.</p>
+ <button class="btn y" id="gh" style="width:100%;margin-top:8px">Entrar con GitHub</button>
+ <details style="margin-top:18px;text-align:left"><summary>Entrar con clave (token)</summary>
+  <p class="muted">Si el botón no funciona, creá una clave en GitHub → Settings → Developer settings → Personal access tokens → Fine-grained, solo para el repositorio <b>mdz-sitio</b> con permiso <b>Contents: Read and write</b>, y pegala acá. Queda guardada solo en este dispositivo.</p>
+  <input id="tok" type="password" autocomplete="off" placeholder="github_pat_...">
+  <button class="btn" id="tokgo" style="width:100%;margin-top:8px">Entrar</button>
+ </details>
+ <p id="lerr" class="muted" style="color:var(--red)"></p>
+</section>
+<section id="loading" class="card" hidden><p>Cargando los datos de la web…</p></section>
+
+<section id="t-prod" hidden>
+ <div class="card">
+  <div class="row">
+   <div style="flex:3 1 260px"><label for="q">Buscar producto</label><input id="q" type="search" placeholder="Nombre, marca o código (ej: codo 110, FV, MDZ-12345)"></div>
+   <div><label for="fr">Categoría</label><select id="fr"></select></div>
+   <div><label for="fe">Mostrar</label><select id="fe"><option value="">Todos</option><option value="sinfoto">Sin foto</option><option value="confoto">Con foto</option><option value="ocultos">Ocultos</option><option value="editados">Cambiados sin publicar</option></select></div>
+  </div>
+  <div class="row" style="margin-top:12px;align-items:center"><span class="muted" id="cnt"></span><button class="btn g" id="addp" style="flex:0 0 auto">+ Agregar producto</button></div>
+ </div>
+ <div class="list" id="res"></div>
+ <div class="pager" id="pager"></div>
+</section>
+
+<section id="t-cat" hidden><div id="cats"></div></section>
+
+<section id="t-vend" hidden>
+ <div class="card">
+  <h3 style="margin-top:0">Número principal (clientes que entran sin link de vendedor)</h3>
+  <div class="row"><div><label for="pnom">Nombre</label><input id="pnom"></div><div><label for="ptel">Teléfono WhatsApp</label><input id="ptel" inputmode="tel" placeholder="261 660-9480"></div></div>
+ </div>
+ <div class="card">
+  <h3 style="margin-top:0">Vendedores con link propio</h3>
+  <p class="muted">Cada cliente que entra por el link de un vendedor le escribe directo a él durante 180 días. Los correos y comisiones anotalos en tu planilla privada (acá todo es público).</p>
+  <div style="overflow-x:auto"><table><thead><tr><th>Nombre</th><th>Código</th><th>Teléfono</th><th>Link</th><th></th></tr></thead><tbody id="vbody"></tbody></table></div>
+  <h4>Agregar vendedor</h4>
+  <div class="row"><div><label for="vnom">Nombre</label><input id="vnom" placeholder="Germán"></div><div><label for="vtel">Teléfono WhatsApp</label><input id="vtel" inputmode="tel" placeholder="261 555-1234"></div><div style="flex:0 0 auto"><button class="btn g" id="vadd">Agregar</button></div></div>
+ </div>
+</section>
+
+<section id="t-redes" hidden>
+ <div class="card"><h3 style="margin-top:0">Redes sociales</h3><p class="muted">Pegá el link de cada perfil. Si lo dejás vacío, no aparece en la web.</p>
+  <div id="redes"></div></div>
+</section>
+</main>
+
+<div class="pub" id="pub" hidden><span>Tenés <b id="pubn">0</b> cambios sin publicar</span><button class="btn l sm" id="undo">Descartar</button><button class="btn y" id="pubgo">Publicar en la web</button></div>
+<div class="ov" id="ov" hidden><div class="side" id="side" role="dialog" aria-modal="true"></div></div>
+<div class="toast" id="toast" hidden></div>
+<input type="file" id="file" accept="image/*" hidden>
+
+<script>
+(function(){
+'use strict';
+const OWNER='tomasggui15-bit',REPO='mdz-sitio',BR='main',API='https://api.github.com/repos/'+OWNER+'/'+REPO;
+const $=id=>document.getElementById(id);
+const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const norm=t=>String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+const slug=t=>norm(t).replace(/[^a-z0-9]+/g,'').slice(0,30);
+let TOKEN='',HEAD='',CAT=null,AJ=null,IDX='',R=[],RD=[],DESC={},PEND={},FOTOS={},BLOB={},EDIT=new Set();
+function toast(t,ms){const e=$('toast');e.textContent=t;e.hidden=false;clearTimeout(e._t);e._t=setTimeout(()=>e.hidden=true,ms||3500)}
+function lsG(k){try{return localStorage.getItem(k)}catch(e){return null}}function lsS(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}}
+
+/* ---------- GitHub ---------- */
+async function gh(path,opt){opt=opt||{};const h=Object.assign({'Authorization':'Bearer '+TOKEN,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'},opt.headers||{});
+ const r=await fetch(path.startsWith('http')?path:API+path,{method:opt.method||'GET',headers:h,body:opt.body?JSON.stringify(opt.body):undefined,cache:'no-store'});
+ if(!r.ok){let m='';try{m=(await r.json()).message}catch(e){}const er=new Error(r.status+' '+m);er.status=r.status;throw er}
+ return opt.raw?r.text():r.json()}
+const raw=p=>gh('/contents/'+p+'?ref='+HEAD,{raw:1,headers:{'Accept':'application/vnd.github.raw+json'}});
+
+/* ---------- Login ---------- */
+async function entrar(t){TOKEN=t;$('lerr').textContent='';
+ try{const repo=await gh('');if(!repo.permissions||!repo.permissions.push)throw new Error('Esta cuenta no tiene permiso para editar la web.');
+  const u=await gh('https://api.github.com/user');lsS('mdz_admin_tok',t);$('whoname').textContent='Conectado como '+u.login;await cargar()}
+ catch(e){TOKEN='';lsS('mdz_admin_tok',null);$('loading').hidden=true;$('login').hidden=false;$('lerr').textContent=e.status===401?'La sesión venció o la clave no es válida. Volvé a entrar.':(e.message||'No se pudo entrar.')}}
+$('gh').onclick=()=>{
+ const w=window.open('https://api.netlify.com/auth?provider=github&site_id='+encodeURIComponent(location.hostname)+'&scope=public_repo','mdzauth','width=600,height=700');
+ if(!w){$('lerr').textContent='Permití las ventanas emergentes para entrar.';return}
+ function on(e){if(e.origin!=='https://api.netlify.com')return;const d=String(e.data||'');
+  if(d==='authorizing:github'){w.postMessage(d,e.origin);return}
+  const m=d.match(/^authorization:github:(success|error):(.*)$/);if(!m)return;window.removeEventListener('message',on);
+  try{const j=JSON.parse(m[2]);if(m[1]==='success'&&j.token){$('login').hidden=true;$('loading').hidden=false;entrar(j.token)}else $('lerr').textContent='GitHub no autorizó el ingreso. '+(j.message||'')}catch(x){$('lerr').textContent='No se pudo entrar.'}}
+ window.addEventListener('message',on)};
+$('tokgo').onclick=()=>{const t=$('tok').value.trim();if(!t)return;$('login').hidden=true;$('loading').hidden=false;entrar(t)};
+$('logout').onclick=()=>{if(Object.keys(PEND).length&&!confirm('Tenés cambios sin publicar. ¿Salir igual?'))return;lsS('mdz_admin_tok',null);location.reload()};
+
+/* ---------- Carga ---------- */
+async function cargar(){$('loading').hidden=false;
+ const ref=await gh('/git/ref/heads/'+BR);HEAD=ref.object.sha;
+ const [c,a,ix]=await Promise.all([raw('catalogo.json'),raw('ajustes.json'),raw('index.html')]);
+ CAT=JSON.parse(c);CAT.c=CAT.c||[];CAT.f=CAT.f||{};CAT.x=CAT.x||[];AJ=JSON.parse(a);IDX=ix;
+ R=JSON.parse(IDX.match(/^const R=(\[.*\]);/m)[1]);RD=JSON.parse(IDX.match(/const RD=(\[.*?\]);/)[1]);
+ PEND={};FOTOS={};EDIT=new Set();DESC={};
+ $('loading').hidden=true;$('who').hidden=false;$('tabs').hidden=false;
+ $('fr').innerHTML='<option value="">Todas</option>'+R.map((r,i)=>`<option value="${i}">${esc(r[0])}</option>`).join('');
+ tab('prod');buscar();pubbar()}
+
+/* ---------- Tabs ---------- */
+function tab(t){document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.t===t));['prod','cat','vend','redes'].forEach(k=>$('t-'+k).hidden=k!==t);
+ if(t==='cat')drawCats();if(t==='vend')drawVend();if(t==='redes')drawRedes()}
+$('tabs').onclick=e=>{const b=e.target.closest('button[data-t]');if(b)tab(b.dataset.t)};
+
+/* ---------- Pendientes ---------- */
+function mark(k){PEND[k]=1;pubbar()}
+function pubbar(){const n=EDIT.size+Object.keys(PEND).filter(k=>k!=='cat'&&!k.startsWith('d/')).length;const show=Object.keys(PEND).length>0;
+ $('pub').hidden=!show;document.body.classList.toggle('haspub',show);$('pubn').textContent=Math.max(n,show?1:0)}
+window.addEventListener('beforeunload',e=>{if(Object.keys(PEND).length){e.preventDefault();e.returnValue=''}});
+$('undo').onclick=async()=>{if(!confirm('¿Descartar todos los cambios sin publicar?'))return;Object.values(BLOB).forEach(u=>URL.revokeObjectURL(u));BLOB={};await cargar();toast('Cambios descartados')};
+
+/* ---------- Productos ---------- */
+const HID=()=>new Set(CAT.x);
+function hasPh(i){return i<CAT.ni||!!CAT.f[i]}
+function thumb(i,cls){const f=CAT.f[i];if(f)return `<div class="${cls}" style="background-image:url('${BLOB[f]||'/'+f}')"></div>`;
+ if(i<CAT.ni){const sh=Math.floor(i/25),k=i%25;return `<div class="${cls} spr" style="background-image:url(/s2/${sh}.webp);background-position:${(k%5)/4*100}% ${Math.floor(k/5)/4*100}%"></div>`}
+ return `<div class="${cls}" style="display:grid;place-items:center;color:#9AA8B8;font-size:11px">Sin foto</div>`}
+let PAGE=0,LAST=[];
+function buscar(){const q=norm($('q').value.trim()),fr=$('fr').value,fe=$('fe').value,H=HID();const ws=q.split(/\s+/).filter(Boolean);const out=[];
+ CAT.p.forEach((p,i)=>{if(fr!==''&&p[2]!==+fr)return;
+  if(fe==='ocultos'?!H.has(i):(fe!=='editados'&&H.has(i)))return;
+  if(fe==='sinfoto'&&hasPh(i))return;if(fe==='confoto'&&!hasPh(i))return;if(fe==='editados'&&!EDIT.has(i))return;
+  if(ws.length){const t=norm(p[0]+' '+p[1]+' '+(CAT.c[i]||''));if(!ws.every(w=>t.includes(w)))return}
+  out.push(i)});
+ if(ws.length)out.sort((a,b)=>norm(CAT.p[a][0]).indexOf(ws[0])-norm(CAT.p[b][0]).indexOf(ws[0]));
+ LAST=out;PAGE=0;draw()}
+function draw(){const PS=40,H=HID(),L=LAST.slice(PAGE*PS,PAGE*PS+PS);
+ $('cnt').textContent=LAST.length.toLocaleString('es-AR')+' productos';
+ $('res').innerHTML=L.map(i=>{const p=CAT.p[i];return `<button class="it" data-i="${i}">${thumb(i,'th')}<span><b>${esc(p[0])}</b><small>${esc(p[1]||'Sin marca')} · ${esc(R[p[2]]?R[p[2]][0]:'?')} › ${esc(CAT.s[p[2]][p[3]]||'')} · ${esc(CAT.c[i]||'')}</small></span><span>${H.has(i)?'<span class="tag no">Oculto</span>':''}${hasPh(i)?'':'<span class="tag no">Sin foto</span>'}${EDIT.has(i)?'<span class="tag ed">Sin publicar</span>':''}</span></button>`}).join('')||'<p class="muted">No hay productos con ese filtro.</p>';
+ const np=Math.ceil(LAST.length/PS);$('pager').innerHTML=np>1?`<button class="btn sm l" data-pg="-1" ${PAGE?'':'disabled'}>‹ Anterior</button><span class="muted" style="align-self:center">Página ${PAGE+1} de ${np}</span><button class="btn sm l" data-pg="1" ${PAGE<np-1?'':'disabled'}>Siguiente ›</button>`:''}
+let tq;$('q').oninput=()=>{clearTimeout(tq);tq=setTimeout(buscar,200)};$('fr').onchange=buscar;$('fe').onchange=buscar;
+$('pager').onclick=e=>{const b=e.target.closest('[data-pg]');if(!b)return;PAGE+=+b.dataset.pg;draw();scrollTo(0,0)};
+$('res').onclick=e=>{const b=e.target.closest('.it');if(b)abrir(+b.dataset.i)};
+
+async function descDe(r){const k='d/'+r+'.json';if(!DESC[k]){try{DESC[k]=JSON.parse(await raw(k))}catch(e){DESC[k]={}}}return DESC[k]}
+function nextCode(){let m=0;CAT.c.forEach(c=>{const x=/^MDZ-(\d+)$/.exec(c||'');if(x)m=Math.max(m,+x[1])});return 'MDZ-'+(m+1)}
+let CUR=-1;
+async function abrir(i){CUR=i;const p=CAT.p[i];const d=await descDe(p[2]);const H=HID();
+ const subOpts=r=>CAT.s[r].map((s,k)=>`<option value="${k}">${esc(s)}</option>`).join('')+'<option value="new">+ Nueva subcategoría…</option>';
+ $('side').innerHTML=`<div style="display:flex;justify-content:space-between;align-items:start;gap:8px"><div><h2>Editar producto</h2><span class="muted">N.º interno ${i}${H.has(i)?' · <b style="color:var(--red)">OCULTO en la web</b>':''}</span></div><button class="btn sm l" id="x">Cerrar</button></div>
+ ${thumb(i,'big').replace('class="big','id="bigimg" class="big')}
+ <div class="acts"><button class="btn sm" id="ph">${hasPh(i)?'Cambiar foto':'Subir foto'}</button>${CAT.f[i]?'<button class="btn sm l" id="phx">Quitar foto subida</button>':''}</div>
+ <label for="e0">Nombre</label><input id="e0" value="${esc(p[0])}">
+ <div class="row"><div><label for="e1">Marca</label><input id="e1" value="${esc(p[1])}" list="marcas"></div><div><label for="ec">Código</label><input id="ec" value="${esc(CAT.c[i]||'')}"></div></div>
+ <datalist id="marcas">${[...new Set(CAT.p.map(x=>x[1]).filter(Boolean))].sort().map(m=>`<option value="${esc(m)}">`).join('')}</datalist>
+ <div class="row"><div><label for="e2">Categoría</label><select id="e2">${R.map((r,k)=>`<option value="${k}">${esc(r[0])}</option>`).join('')}</select></div><div><label for="e3">Subcategoría</label><select id="e3">${subOpts(p[2])}</select></div></div>
+ <label for="ed">Descripción</label><textarea id="ed">${esc(d[i]||'')}</textarea>
+ <div class="acts"><button class="btn y" id="ok">Guardar cambio</button>${H.has(i)?'<button class="btn g" id="show">Volver a mostrar en la web</button>':'<button class="btn r" id="hide">Eliminar de la web</button>'}<a class="btn l" href="/#p-${i}" target="_blank" rel="noopener">Ver en la web</a></div>
+ <p class="muted">"Eliminar" lo saca de la web para todos. Queda guardado acá en "Mostrar: Ocultos" por si lo querés recuperar.</p>`;
+ $('e2').value=p[2];$('e3').value=p[3];
+ $('e2').onchange=()=>{$('e3').innerHTML=subOpts(+$('e2').value)};
+ $('e3').onchange=()=>{if($('e3').value!=='new')return;const n=(prompt('Nombre de la nueva subcategoría')||'').trim();const r=+$('e2').value;
+  if(!n){$('e3').value=0;return}let k=CAT.s[r].indexOf(n);if(k<0){CAT.s[r].push(n);k=CAT.s[r].length-1;mark('cat')}$('e3').innerHTML=subOpts(r);$('e3').value=k};
+ $('x').onclick=cerrar;$('ph').onclick=()=>{$('file').value='';$('file').click()};
+ if($('phx'))$('phx').onclick=()=>{delete CAT.f[i];EDIT.add(i);mark('cat');abrir(i);buscar()};
+ if($('hide'))$('hide').onclick=()=>{if(!confirm('¿Sacar "'+p[0]+'" de la web?'))return;CAT.x=[...new Set(CAT.x.concat(i))].sort((a,b)=>a-b);EDIT.add(i);mark('cat');cerrar();buscar();toast('Listo. Se saca de la web al publicar.')};
+ if($('show'))$('show').onclick=()=>{CAT.x=CAT.x.filter(x=>x!==i);EDIT.add(i);mark('cat');cerrar();buscar();toast('Listo. Vuelve a la web al publicar.')};
+ $('ok').onclick=async()=>{const nm=$('e0').value.trim();if(!nm){toast('El nombre no puede quedar vacío');return}
+  const nr=+$('e2').value,ns=+$('e3').value,old=p[2];const nd=$('ed').value.trim();
+  const ch=nm!==p[0]||$('e1').value.trim()!==(p[1]||'')||nr!==p[2]||ns!==p[3]||$('ec').value.trim()!==(CAT.c[i]||'');
+  if(ch){p[0]=nm;p[1]=$('e1').value.trim();p[2]=nr;p[3]=ns;CAT.c[i]=$('ec').value.trim();mark('cat')}
+  const dOld=await descDe(old);const dNew=await descDe(nr);
+  if(old!==nr){if(i in dOld){delete dOld[i];mark('d/'+old+'.json')}}
+  if((dNew[i]||'')!==nd||old!==nr){if(nd)dNew[i]=nd;else delete dNew[i];mark('d/'+nr+'.json')}
+  if(ch||PEND['d/'+nr+'.json'])EDIT.add(i);cerrar();buscar();toast('Guardado. Tocá "Publicar en la web" cuando termines.')};
+ $('ov').hidden=false;$('side').scrollTop=0}
+function cerrar(){$('ov').hidden=true;CUR=-1}
+$('ov').onclick=e=>{if(e.target.id==='ov')cerrar()};document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('ov').hidden)cerrar()});
+
+/* Foto: se achica a 900 px y se guarda en WebP */
+$('file').onchange=async()=>{const f=$('file').files[0];if(!f||CUR<0)return;
+ try{const bm=await createImageBitmap(f);const sc=Math.min(1,900/Math.max(bm.width,bm.height));const w=Math.round(bm.width*sc),h=Math.round(bm.height*sc);
+  const cv=document.createElement('canvas');cv.width=w;cv.height=h;const cx=cv.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,w,h);cx.drawImage(bm,0,0,w,h);
+  const blob=await new Promise(r=>cv.toBlob(r,'image/webp',.85));if(!blob)throw new Error('formato');
+  const b64=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(String(fr.result).split(',')[1]);fr.readAsDataURL(blob)});
+  const path='fotos/'+CUR+'-'+Date.now().toString(36)+'.webp';FOTOS[path]=b64;BLOB[path]=URL.createObjectURL(blob);
+  CAT.f[CUR]=path;EDIT.add(CUR);mark('cat');mark(path);const bi=$('bigimg');if(bi){bi.className='big';bi.removeAttribute('style');bi.textContent='';bi.style.backgroundImage="url('"+BLOB[path]+"')"}$('ph').textContent='Cambiar foto';buscar();toast('Foto cargada. Se publica con "Publicar en la web".')}
+ catch(e){toast('No se pudo leer esa imagen. Probá con una foto JPG o PNG.')}};
+
+$('addp').onclick=()=>{const r=$('fr').value===''?0:+$('fr').value;CAT.p.push(['Producto nuevo','',r,0]);const i=CAT.p.length-1;CAT.c[i]=nextCode();EDIT.add(i);mark('cat');$('q').value='';$('fe').value='editados';buscar();abrir(i);setTimeout(()=>{$('e0').select()},50)};
+
+/* ---------- Categorías ---------- */
+function drawCats(){const H=HID();const n=R.map(()=>0);CAT.p.forEach((p,i)=>{if(!H.has(i))n[p[2]]++});
+ $('cats').innerHTML=R.map((r,k)=>`<div class="card"><div class="row"><div style="flex:2 1 240px"><label>Nombre de la categoría</label><input data-rn="${k}" value="${esc(r[0])}"></div><div style="flex:0 0 auto"><span class="tag ok">${n[k].toLocaleString('es-AR')} productos</span></div></div>
+  <label>Descripción (aparece en la portada de la categoría y en Google)</label><textarea data-rd="${k}" style="min-height:70px">${esc(RD[k]||'')}</textarea>
+  <details style="margin-top:10px"><summary>Subcategorías (${CAT.s[k].length})</summary><div class="subs" style="margin-top:8px">${CAT.s[k].map((s,j)=>`<input data-sn="${k}.${j}" value="${esc(s)}">`).join('')}</div></details></div>`).join('')}
+$('cats').addEventListener('change',e=>{const t=e.target;const v=t.value.trim();
+ if(t.dataset.rn!=null){if(!v){t.value=R[+t.dataset.rn][0];return}R[+t.dataset.rn][0]=v;mark('index.html')}
+ if(t.dataset.rd!=null){RD[+t.dataset.rd]=v;mark('index.html')}
+ if(t.dataset.sn!=null){const [a,b]=t.dataset.sn.split('.').map(Number);if(!v){t.value=CAT.s[a][b];return}CAT.s[a][b]=v;mark('cat')}
+ toast('Guardado. Tocá "Publicar en la web" cuando termines.')});
+
+/* ---------- Vendedores ---------- */
+const telN=t=>{let d=String(t||'').replace(/\D/g,'');if(d.startsWith('549'))return d;if(d.startsWith('54'))d=d.slice(2);if(d.startsWith('0'))d=d.slice(1);d=d.replace(/^(\d{3})15(\d{7})$/,'$1$2');return d.length===10?'549'+d:''};
+const telF=t=>{t=String(t).replace(/^549/,'');return t.length===10?t.slice(0,3)+' '+t.slice(3,6)+'-'+t.slice(6):t};
+function drawVend(){const base=location.origin;$('pnom').value=AJ.principal.nombre;$('ptel').value=telF(AJ.principal.tel);
+ const V=AJ.vendedores||{};$('vbody').innerHTML=Object.keys(V).map(k=>`<tr><td><input data-vn="${k}" value="${esc(V[k].nombre)}"></td><td><b>${esc(k)}</b></td><td><input data-vt="${k}" value="${esc(telF(V[k].tel))}" inputmode="tel"></td><td><span class="vlink">${esc(base+'/v/'+k)}</span><br><button class="btn sm l" data-cp="${esc(base+'/v/'+k)}">Copiar link</button> <a class="btn sm g" target="_blank" rel="noopener" href="https://wa.me/${esc(V[k].tel)}?text=${encodeURIComponent('Hola '+V[k].nombre+'! Este es tu link de vendedor de Materiales MDZ: '+base+'/v/'+k+' . Todo cliente que entre por ahí te escribe directo a vos.')}">Mandárselo</a></td><td><button class="btn sm r" data-vx="${k}">Quitar</button></td></tr>`).join('')||'<tr><td colspan="5" class="muted">Todavía no hay vendedores.</td></tr>'}
+$('t-vend').addEventListener('change',e=>{const t=e.target,V=AJ.vendedores;
+ if(t.id==='pnom'&&t.value.trim()){AJ.principal.nombre=t.value.trim();mark('ajustes.json')}
+ if(t.id==='ptel'){const n=telN(t.value);if(!n){toast('Revisá el teléfono: característica + número, ej. 261 660-9480');return}AJ.principal.tel=n;mark('ajustes.json')}
+ if(t.dataset.vn&&t.value.trim()){V[t.dataset.vn].nombre=t.value.trim();mark('ajustes.json')}
+ if(t.dataset.vt){const n=telN(t.value);if(!n){toast('Revisá el teléfono: característica + número, ej. 261 555-1234');return}V[t.dataset.vt].tel=n;mark('ajustes.json');drawVend()}});
+$('t-vend').addEventListener('click',async e=>{const t=e.target.closest('button');if(!t)return;
+ if(t.dataset.cp){try{await navigator.clipboard.writeText(t.dataset.cp);toast('Link copiado')}catch(x){prompt('Copiá el link:',t.dataset.cp)}}
+ if(t.dataset.vx){if(!confirm('¿Quitar a '+AJ.vendedores[t.dataset.vx].nombre+'? Sus clientes pasan al número principal.'))return;delete AJ.vendedores[t.dataset.vx];mark('ajustes.json');drawVend()}
+ if(t.id==='vadd'){const nm=$('vnom').value.trim(),tel=telN($('vtel').value);if(!nm){toast('Poné el nombre');return}if(!tel){toast('Revisá el teléfono: característica + número, ej. 261 555-1234');return}
+  AJ.vendedores=AJ.vendedores||{};let k=slug(nm.split(' ')[0])||'vendedor',b=k,n=2;while(AJ.vendedores[k])k=b+(n++);AJ.vendedores[k]={nombre:nm,tel:tel};$('vnom').value='';$('vtel').value='';mark('ajustes.json');drawVend();toast('Agregado. Su link: /v/'+k+' (funciona después de publicar)')}});
+
+/* ---------- Redes ---------- */
+const RN=[['instagram','Instagram'],['facebook','Facebook'],['tiktok','TikTok'],['youtube','YouTube']];
+function drawRedes(){AJ.redes=AJ.redes||{};$('redes').innerHTML=RN.map(([k,n])=>`<label for="rd-${k}">${n}</label><input id="rd-${k}" data-red="${k}" type="url" placeholder="https://..." value="${esc(AJ.redes[k]||'')}">`).join('')}
+$('redes').addEventListener('change',e=>{const t=e.target;if(!t.dataset.red)return;const v=t.value.trim();if(v&&!/^https:\/\/\S+$/.test(v)){toast('El link tiene que empezar con https://');return}AJ.redes[t.dataset.red]=v;mark('ajustes.json');toast('Guardado. Tocá "Publicar en la web" cuando termines.')});
+
+/* ---------- Publicar (un solo cambio en GitHub con todo) ---------- */
+$('pubgo').onclick=async()=>{const b=$('pubgo');b.disabled=true;b.textContent='Publicando…';
+ try{const ref=await gh('/git/ref/heads/'+BR);const now=ref.object.sha;const paths=Object.keys(PEND).map(k=>k==='cat'?'catalogo.json':k);
+  if(now!==HEAD){const cmp=await gh('/compare/'+HEAD+'...'+now);const hit=(cmp.files||[]).filter(f=>paths.includes(f.filename));
+   if(hit.length)throw new Error('Mientras editabas se actualizaron estos archivos en la web: '+hit.map(f=>f.filename).join(', ')+'. Recargá el panel y repetí el cambio.')}
+  const files=[];
+  if(PEND.cat){const c=Object.assign({},CAT);c.x=[...new Set(CAT.x)].sort((a,b)=>a-b);if(!c.x.length)delete c.x;if(!Object.keys(c.f).length)delete c.f;files.push(['catalogo.json',JSON.stringify(c),'utf-8'])}
+  Object.keys(PEND).filter(k=>k.startsWith('d/')).forEach(k=>files.push([k,JSON.stringify(DESC[k]),'utf-8']));
+  if(PEND['ajustes.json'])files.push(['ajustes.json',JSON.stringify(AJ,null,2)+'\n','utf-8']);
+  if(PEND['index.html']){let s=IDX.replace(/^const R=(\[.*\]);/m,()=> 'const R='+JSON.stringify(R)+';').replace(/const RD=(\[.*?\]);/,()=> 'const RD='+JSON.stringify(RD)+';');files.push(['index.html',s,'utf-8'])}
+  Object.keys(FOTOS).filter(p=>Object.values(CAT.f).includes(p)).forEach(p=>files.push([p,FOTOS[p],'base64']));
+  const tree=[];for(const [path,content,enc] of files){const bl=await gh('/git/blobs',{method:'POST',body:{content,encoding:enc}});tree.push({path,mode:'100644',type:'blob',sha:bl.sha})}
+  const base=await gh('/git/commits/'+now);const t=await gh('/git/trees',{method:'POST',body:{base_tree:base.tree.sha,tree}});
+  const n=EDIT.size;const cm=await gh('/git/commits',{method:'POST',body:{message:'Panel: '+(n?n+' producto(s) ':'')+'cambios desde el panel de administrador',tree:t.sha,parents:[now]}});
+  await gh('/git/refs/heads/'+BR,{method:'PATCH',body:{sha:cm.sha}});
+  HEAD=cm.sha;if(PEND['index.html'])IDX=files.find(f=>f[0]==='index.html')[1];PEND={};FOTOS={};EDIT=new Set();pubbar();buscar();
+  toast('¡Publicado! En 1 a 3 minutos se ve en la web.',6000)}
+ catch(e){toast((e.status===401?'Se venció la sesión. Salí y volvé a entrar. ':'No se pudo publicar: ')+e.message,9000)}
+ finally{b.disabled=false;b.textContent='Publicar en la web'}};
+
+/* ---------- Inicio ---------- */
+const t=lsG('mdz_admin_tok');if(t){$('loading').hidden=false;entrar(t)}else $('login').hidden=false;
+})();
+</script>
+</body></html>
