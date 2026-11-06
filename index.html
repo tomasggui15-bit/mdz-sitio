@@ -1661,7 +1661,7 @@ function coverHTML(r){const L=[];CAT.p.forEach((p,i)=>{if(p[2]===r)L.push(i)});
   <div class="wrap rv-body">
    <div class="rv-sh"><h2>Elegí el tipo</h2><span>${subs.length} categorías</span></div>
    <div class="stiles">${subs.map(([sb,k,items])=>`<button class="stile" data-sub="${esc(sb)}" aria-pressed="${st.s===sb}"><div class="si"><div class="pimg" style="${spr(items.find(i=>i<CAT.ni)??items[0])}"></div></div><div class="st"><b>${esc(sb)}</b><small>${fmt(items.length)} productos</small></div></button>`).join('')}</div>
-   ${brands.length?`<div class="rv-bl"><h3>Elegí la marca</h3><div class="rv-logos">${bl.map(([b,c])=>{const g=LG[bkey(b)];return `<button class="rv-logo${g.c?' '+g.c:''}" data-brand="${esc(bkey(b))}" aria-pressed="${st.b.has(bkey(b))}" title="${esc(b)}"><img src="${g.s}" alt="${esc(b)}" loading="lazy"><small>${c} producto${c==1?'':'s'}</small></button>`}).join('')}</div>${bt.length?`<div class="rv-brands"><span>${bl.length?'Otras marcas':'Marcas'}</span>${bt.map(([b,c])=>`<button data-brand="${esc(bkey(b))}" aria-pressed="${st.b.has(bkey(b))}">${esc(b)}<small>${c}</small></button>`).join('')}</div>`:''}</div>`:''}
+   ${bl.length?`<div class="rv-bl"><h3>Elegí la marca</h3><div class="rv-logos">${bl.map(([b,c])=>{const g=LG[bkey(b)];return `<button class="rv-logo${g.c?' '+g.c:''}" data-brand="${esc(bkey(b))}" aria-pressed="${st.b.has(bkey(b))}" title="${esc(b)}"><img src="${g.s}" alt="${esc(b)}" loading="lazy"><small>${c} producto${c==1?'':'s'}</small></button>`}).join('')}</div></div>`:''}
   </div>`}
 function showR(r){if(!CAT||!R[r]){return}
   document.body.classList.remove('pmode');$('pview').hidden=true;
