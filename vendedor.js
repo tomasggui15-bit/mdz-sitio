@@ -36,6 +36,7 @@
     if(e.defaultPrevented||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey)return;
     var a=e.target.closest&&e.target.closest('a[href*="wa.me/"]');if(!a)return;
     if(/wa\.me\/\?/.test(a.getAttribute('href')||''))return; /* "compartir" sin número: no preguntar */
+    if(a.hasAttribute('data-direct'))return; /* número elegido a mano: no preguntar */
     if(vend().length<2)return;
     e.preventDefault();ask(a);
   },true);
