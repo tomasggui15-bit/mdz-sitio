@@ -1117,23 +1117,25 @@ var NV='#0F2740',Y='#FFC20E',SK='#FFE7A3',BX='#C98B4A',T=12,G=212;
 var bg=document.getElementById('proc-bg'),fg=document.getElementById('proc-fg');if(!fg)return;
 var cl=function(x){return x<0?0:x>1?1:x},io=function(x){x=cl(x);return x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2},lerp=function(a,b,p){return a+(b-a)*p},
  seg=function(t,a,b){return io((t-a)/(b-a))},R=Math.PI/180,FONT='font-family="Barlow Condensed,Barlow,sans-serif" font-weight="800"';
-// muñequito: siempre 2 piernas y 2 brazos
+// muñequito estilo pictograma (relleno, extremidades gruesas): siempre 2 piernas y 2 brazos
 function fig(o){
- var x=o.x,y=G-(o.lift||0),d=o.dir||1,L=58,BODY=52,ARM=44;
- var hip=y-L,sh=hip-BODY,s='';
- var l1,l2,a1=o.a1,a2=o.a2;
- if(o.walk!=null){var w=Math.sin(o.walk);l1=26*w;l2=-26*w;if(a1==null){a1=24*-w;a2=24*w}}
- else{l1=10;l2=-10}
- if(a1==null)a1=12;if(a2==null)a2=-12;
- var leg=function(a){return'<line x1="0" y1="'+hip+'" x2="'+(Math.sin(a*R)*L)+'" y2="'+(hip+Math.cos(a*R)*L)+'"/>'};
- var arm=function(a){return'<line x1="0" y1="'+(sh+6)+'" x2="'+(Math.sin(a*R)*ARM)+'" y2="'+(sh+6+Math.cos(a*R)*ARM)+'"/>'};
- s+='<g transform="translate('+x+',0) scale('+d+',1)" stroke="'+NV+'" stroke-width="5" stroke-linecap="round" fill="none">';
- s+=leg(l1)+leg(l2)+'<line x1="0" y1="'+hip+'" x2="0" y2="'+sh+'"/>'+arm(a1)+arm(a2);
- var hy=sh-18;s+='<circle cx="0" cy="'+hy+'" r="15" fill="'+SK+'"/>';
- s+='<circle cx="5" cy="'+(hy-2)+'" r="1.8" fill="'+NV+'" stroke="none"/>';
- s+=o.smile?'<path d="M-2 '+(hy+5)+' Q5 '+(hy+11)+' 11 '+(hy+4)+'" stroke-width="3"/>':'<path d="M1 '+(hy+7)+' L9 '+(hy+7)+'" stroke-width="3"/>';
- if(o.hat==='casco')s+='<path d="M-17 '+(hy-4)+' Q-16 '+(hy-22)+' 0 '+(hy-23)+' Q16 '+(hy-22)+' 17 '+(hy-4)+'z" fill="#fff" stroke-width="4"/><line x1="-20" y1="'+(hy-4)+'" x2="20" y2="'+(hy-4)+'" stroke-width="4"/>';
- if(o.hat==='gorra')s+='<path d="M-16 '+(hy-5)+' Q-15 '+(hy-21)+' 0 '+(hy-21)+' Q15 '+(hy-21)+' 16 '+(hy-5)+'z" fill="'+NV+'" stroke-width="3"/><line x1="12" y1="'+(hy-6)+'" x2="28" y2="'+(hy-6)+'" stroke-width="5"/>';
+ var x=o.x,y=G-(o.lift||0),d=o.dir||1,TH=29,SH=29,UA=23,FA=23,BODY=50;
+ var hip=y-TH-SH,sh=hip-BODY,s='';
+ var l1,l2,a1=o.a1,a2=o.a2,w=0,walking=o.walk!=null;
+ if(walking){w=Math.sin(o.walk);l1=26*w;l2=-26*w;if(a1==null){a1=34*-w;a2=34*w}}else{l1=12;l2=-12}
+ if(a1==null)a1=24;if(a2==null)a2=-24;
+ var P=function(x0,y0,ang,len){return[x0+Math.sin(ang*R)*len,y0+Math.cos(ang*R)*len]};
+ var leg=function(a){var k=P(0,hip,a,TH),bend=walking?(a<0?-28*Math.abs(w):6):0,f=P(k[0],k[1],a+bend,SH);
+  return'<polyline points="0,'+hip+' '+k[0]+','+k[1]+' '+f[0]+','+f[1]+'"/>'};
+ var arm=function(a){var bend=o.straight?0:(walking?22:(a>40?-12:8)),e=P(0,sh+12,a,UA),h=P(e[0],e[1],a+bend,FA);
+  return'<polyline points="0,'+(sh+12)+' '+e[0]+','+e[1]+' '+h[0]+','+h[1]+'"/>'};
+ s+='<g transform="translate('+x+',0) scale('+d+',1)" stroke="'+NV+'" stroke-linecap="round" stroke-linejoin="round" fill="none">';
+ s+='<g stroke-width="13">'+leg(l2)+arm(a2)+'</g>';
+ s+='<line x1="0" y1="'+(sh+13)+'" x2="0" y2="'+(hip-2)+'" stroke-width="26"/>';
+ s+='<g stroke-width="13">'+leg(l1)+arm(a1)+'</g>';
+ var hy=sh-19;s+='<circle cx="0" cy="'+hy+'" r="13" fill="'+NV+'" stroke="none"/>';
+ if(o.hat==='casco')s+='<path d="M-16 '+(hy-3)+' Q-15 '+(hy-22)+' 0 '+(hy-23)+' Q15 '+(hy-22)+' 16 '+(hy-3)+'z" fill="#fff" stroke-width="3.5"/><line x1="-20" y1="'+(hy-3)+'" x2="20" y2="'+(hy-3)+'" stroke-width="4.5"/>';
+ if(o.hat==='gorra')s+='<path d="M-15 '+(hy-4)+' Q-14 '+(hy-20)+' 0 '+(hy-20)+' Q14 '+(hy-20)+' 15 '+(hy-4)+'z" fill="'+Y+'" stroke-width="3"/><line x1="11" y1="'+(hy-5)+'" x2="27" y2="'+(hy-5)+'" stroke="'+Y+'" stroke-width="5"/>';
  s+='</g>';if(o.hold)s+=o.hold;return s}
 var box=function(x,y,s){s=s||1;return'<g transform="translate('+x+','+y+') scale('+s+')"><rect x="-17" y="-28" width="34" height="28" rx="3" fill="'+BX+'" stroke="'+NV+'" stroke-width="3"/><line x1="0" y1="-28" x2="0" y2="0" stroke="#E8C08A" stroke-width="5"/></g>'};
 var ck=function(x,y,p){if(p<=0)return'';var k=p<.6?p/.6*1.2:1.2-(p-.6)/.4*.2;return'<g transform="translate('+x+','+y+') scale('+k+')"><circle r="18" fill="#1F8B4C"/><path d="M-8 0 L-2 6 L9 -6" stroke="#fff" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>'};
@@ -1151,12 +1153,12 @@ function frame(t){
  if(t<5.2||t>11.5)s+=box(765,172,.9);
  // 1) cliente: camina hasta la obra, levanta el celular y manda la lista
  var cx=lerp(100,175,seg(t,0,1.2)),walking=t<1.2,up=seg(t,1.2,1.6)-seg(t,3.0,3.4),ra=lerp(15,155,up);
- var hx=cx+Math.sin(ra*R)*44,hy=G-58-52+6+Math.cos(ra*R)*44;
- var phone='<g transform="translate('+hx+','+hy+') rotate('+(ra-180)+')"><rect x="-7" y="-4" width="14" height="22" rx="3" fill="'+NV+'"/><rect x="-4" y="-1" width="8" height="15" rx="1" fill="#25D366"/></g>';
- s+=fig({x:cx,dir:1,hat:'casco',walk:walking?t*9:null,a1:walking?null:ra,a2:walking?null:-28+6*Math.sin(t*3),lift:walking?Math.abs(Math.sin(t*9))*3:Math.abs(Math.sin(t*2))*1.5,smile:1,hold:phone});
+ var bd=walking?22:(ra>40?-12:8),ex=cx+Math.sin(ra*R)*23,ey=G-108+12+Math.cos(ra*R)*23,hx=ex+Math.sin((ra+bd)*R)*23,hy=ey+Math.cos((ra+bd)*R)*23;
+ var phone='<g transform="translate('+hx+','+hy+') rotate('+(ra+bd-180)+')"><rect x="-7" y="-4" width="14" height="22" rx="3" fill="'+NV+'"/><rect x="-4" y="-1" width="8" height="15" rx="1" fill="#25D366"/></g>';
+ s+=fig({x:cx,dir:1,hat:'casco',walk:walking?t*9:null,a1:walking?null:ra,a2:walking?null:-34+6*Math.sin(t*3),lift:walking?Math.abs(Math.sin(t*9))*3:Math.abs(Math.sin(t*2))*1.5,smile:1,hold:phone});
  p=cl((t-1.5)/.3)-cl((t-3.1)/.3);if(p>0)s+='<g opacity="'+p+'" transform="translate('+(cx+30)+',22)"><rect x="0" y="0" width="86" height="46" rx="11" fill="#fff" stroke="'+NV+'" stroke-width="4"/><path d="M12 46 L6 60 L28 46" fill="#fff" stroke="'+NV+'" stroke-width="4" stroke-linejoin="round"/><text x="43" y="31" text-anchor="middle" '+FONT+' font-size="24" fill="'+NV+'">LISTA</text></g>';
  // mensaje volando al vendedor
- p=(t-2.0)/1.2;if(p>0&&p<1){var mx=lerp(cx+60,500,io(p)),my=lerp(70,96,p)-Math.sin(p*Math.PI)*40;s+='<g transform="translate('+mx+','+my+')"><rect x="-18" y="-12" width="36" height="24" rx="5" fill="#25D366"/><path d="M-18 -12 L0 2 L18 -12" stroke="#fff" stroke-width="3.5" fill="none"/></g>'}
+ p=(t-2.0)/1.2;if(p>0&&p<1){var mx=lerp(hx+18,500,io(p)),my=lerp(hy+14,100,p)-Math.sin(p*Math.PI)*8;s+='<g transform="translate('+mx+','+my+')"><rect x="-18" y="-12" width="36" height="24" rx="5" fill="#25D366"/><path d="M-18 -12 L0 2 L18 -12" stroke="#fff" stroke-width="3.5" fill="none"/></g>'}
  // 2) vendedor MDZ: escribe en la compu todo el tiempo, asiente al recibir
  var nod=t>3.2&&t<3.9?Math.sin((t-3.2)*18)*3:0;
  s+=fig({x:468,dir:1,hat:'gorra',a1:78+8*Math.sin(t*14),a2:28+8*Math.sin(t*14+2),lift:-nod+Math.abs(Math.sin(t*2))*1.2,smile:t>3.2&&t<5.2});
@@ -1169,7 +1171,7 @@ function frame(t){
  if(t<5.0){wx=820;wd=-1}else if(t<5.4){wx=820;wd=-1;carry=t>5.2}else if(t<6.6){wx=lerp(820,872,seg(t,5.4,6.6));wd=1;carry=true;ww=t*9}else if(t<6.9){wx=872;wd=1;carry=t<6.75}else if(t<7.8){wx=lerp(872,820,seg(t,6.9,7.8));wd=-1;ww=t*9}else{wx=820;wd=-1}
  var reach=t>4.9&&t<5.2;
  var bxh=carry?box(wx+wd*40,G-88,.9):'';
- s+=fig({x:wx,dir:wd,hat:'gorra',walk:ww,a1:carry?88:(reach?80:(ww==null?16+4*Math.sin(t*2.5):null)),a2:carry?48:(reach?42:(ww==null?-16:null)),lift:ww!=null?Math.abs(Math.sin(ww))*3:Math.abs(Math.sin(t*2+1))*1.2,smile:1,hold:bxh});
+ s+=fig({x:wx,dir:wd,hat:'gorra',walk:ww,a1:carry?88:(reach?80:(ww==null?24+4*Math.sin(t*2.5):null)),a2:carry?48:(reach?42:(ww==null?-24:null)),lift:ww!=null?Math.abs(Math.sin(ww))*3:Math.abs(Math.sin(t*2+1))*1.2,smile:1,hold:bxh});
  // camión: espera la carga, viaja hasta la casa y vuelve a aparecer
  var tx=lerp(910,970,seg(t,7.6,9.6)),moving=t>7.6&&t<9.6,top=moving?Math.abs(Math.sin(t*14))*2:0,op=t>11.3?cl((11.8-t)/.5):cl(t/.4);
  var cargo=t>6.75&&t<10.0;
