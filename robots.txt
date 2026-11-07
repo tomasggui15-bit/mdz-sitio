@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /tools/
 
-Sitemap: https://mdzmaterialesdeconstruccion.netlify.app/sitemap.xml
+Sitemap: https://materialesmdz.com/sitemap.xml

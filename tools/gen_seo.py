@@ -34,6 +34,31 @@ def slug(t, i):
     t = re.sub(r'[^a-z0-9]+', '-', norm(t)).strip('-')
     return (t[:70].rstrip('-') or 'producto') + f'-{i}'
 
+
+AC = re.compile(r'^(IPS|PVC|PPR|PP|LED|FV|HH|MH|HHH|HHC|IRAM|RBM|PKD|ABS|TV|USB|AA|AAA|PE|PEAD|CPVC|ACQUA|EPOXI|SIGAS)$')
+def nice(p):
+    """Nombre legible para personas (el mismo criterio que la web)."""
+    t = str(p[0] or '')
+    U = re.sub(r'[^A-ZÁÉÍÓÚÑ]', '', t)
+    if len(U) > 3:
+        out = []
+        for w in t.split(' '):
+            l = re.sub(r'[^A-Za-zÁÉÍÓÚÑáéíóúñ]', '', w)
+            out.append(w.lower() if len(l) >= 2 and l == l.upper() and not AC.match(l) else w)
+        t = ' '.join(out); t = t[:1].upper() + t[1:]
+    t = re.sub(r'(\d)\s*[xX]\s*(\d)', r'\1 × \2', t)
+    t = re.sub(r'\s*(\(\d+\))+\s*', ' ', t)
+    t = re.sub(r'\b(\d+)\s?mm\b', r'\1 mm', t, flags=re.I)
+    b = (p[1] or '').strip()
+    if b and not re.search(r'vac', b, re.I):
+        t = re.sub(r'\b' + re.escape(b) + r'\b', b, t, flags=re.I)
+    t = re.sub(r'\b(ips|fv|pvc|ppr|pp|hh|mh|hhh|led)\b', lambda m: m.group(0).upper(), t, flags=re.I)
+    t = re.sub(r'\b(fusi[oó]n)\s+(fusi[oó]n)\b', r'\1', t, flags=re.I)
+    return re.sub(r'\s{2,}', ' ', t).strip()
+def niceB(p):
+    b = (p[1] or '').strip()
+    return '' if re.search(r'vac[ií]o', b, re.I) else b
+
 def esc(t):
     return html.escape(str(t), quote=True)
 
@@ -111,7 +136,7 @@ SL = [slug(p[0], i) for i, p in enumerate(P)]
 RSL = [re.sub(r'[^a-z0-9]+', '-', norm(r[0])).strip('-') for r in R]
 os.makedirs(os.path.join(SITE, 'p'), exist_ok=True)
 
-CSS = """:root{--bg:#F4F6F9;--surface:#fff;--ink:#0E1B2B;--muted:#56657A;--line:#DCE3EC;--chip:#EEF2F7;--y:#FFC20E;--y2:#B98700;--navy:#0F2740;--wa:#1FA855;--d:"Barlow Condensed","Arial Narrow",Arial,sans-serif;--b:"Barlow",Arial,Helvetica,sans-serif}
+CSS = """:root{--bg:#F4F6F9;--surface:#fff;--ink:#0E1B2B;--muted:#56657A;--line:#DCE3EC;--chip:#EEF2F7;--y:#FFC20E;--y2:#B98700;--navy:#0F2740;--wa:#128C4A;--d:"Barlow Condensed","Arial Narrow",Arial,sans-serif;--b:"Barlow",Arial,Helvetica,sans-serif}
 @media (prefers-color-scheme:dark){:root{--bg:#0A1420;--surface:#111F31;--ink:#EAF0F6;--muted:#9DADBF;--line:#22344A;--chip:#18293E;--y2:#FFC20E;color-scheme:dark}}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--b);font-size:16px;line-height:1.5;padding-bottom:env(safe-area-inset-bottom,0px)}
 a{color:inherit}.wrap{max-width:1200px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -163,7 +188,7 @@ for fn in os.listdir(os.path.join(SITE, 'p')):
     if fn.endswith('.html'): os.remove(os.path.join(SITE, 'p', fn))
 for i, p in enumerate(P):
     if not HP(i): continue
-    name, brand, r, sb = p[0], p[1] or '', p[2], SUBS[p[2]][p[3]]
+    name, brand, r, sb = nice(p), niceB(p), p[2], SUBS[p[2]][p[3]]
     rub = R[r][0]
     d = DESC.get(str(i), '') or ''
     code = KC[i] if i < len(KC) else ''
@@ -183,7 +208,7 @@ for i, p in enumerate(P):
     sim = similar(i)
     sim_html = ''.join(
         f'<a class="pc" href="{SL[j]}.html"><div class="pb"><div class="pimg" style="{spr(j)}"></div></div>'
-        f'<div class="pi"><span class="b">{esc(P[j][1] or "")}</span><span class="n">{esc(P[j][0])}</span></div></a>' for j in sim)
+        f'<div class="pi"><span class="b">{esc(niceB(P[j]))}</span><span class="n">{esc(nice(P[j]))}</span></div></a>' for j in sim)
     tags = (f'<span style="background:#0F2740;color:#FFC20E">Código {esc(code)}</span>' if code else '') + ''.join(f'<span>{esc(t)}</span>' for t in meas(name))
     page = f"""<!doctype html>
 <html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -201,7 +226,7 @@ for i, p in enumerate(P):
 <nav class="crumb" aria-label="Ubicación"><a href="../">Catálogo</a><span>›</span><a href="../r/{RSL[r]}.html">{esc(rub)}</a><span>›</span><span>{esc(sb)}</span></nav>
 <div class="top"><div class="img"><div class="pimg" style="{spr(i)}" role="img" aria-label="{esc(name)}"></div></div>
 <div class="info">{f'<div class="brd">{esc(brand)}</div>' if brand else ''}<h1>{esc(name)}</h1>{f'<div class="tags">{tags}</div>' if tags else ''}
-<div class="box"><a class="btn bwa" href="{esc(wa)}" target="_blank" rel="noopener">Pedir presupuesto por WhatsApp</a><a class="btn by" href="../#p-{i}">Agregar a mi lista</a><p>Precio en pesos con el envío incluido: te lo pasamos por WhatsApp en el día.</p></div>
+<div class="box"><a class="btn bwa" href="{esc(wa)}" target="_blank" rel="noopener">Pedir presupuesto por WhatsApp</a><a class="btn by" href="../#p-{i}">Agregar a mi lista</a><p>Precio en pesos y costo de envío detallado: te lo pasamos por WhatsApp en el día.</p></div>
 <ul class="perks"><li>Envío a domicilio en todo Gran Mendoza, en 24 a 48 h hábiles</li><li>Pagás por transferencia, Mercado Pago o efectivo contra entrega</li><li>Te ayudamos a elegir y a armar la lista completa</li></ul></div></div>
 <section class="sec"><h2>Descripción</h2><div class="txt">{fmt_desc(d) if d else '<p>Consultanos por WhatsApp y te pasamos la ficha técnica.</p>'}</div></section>
 {f'<section class="sim"><h2>Productos similares</h2><div class="grid">{sim_html}</div></section>' if sim else ''}
@@ -235,10 +260,10 @@ for r, rr in enumerate(R):
     secs = []
     for k, L in order:
         sb = SUBS[r][k]; anchor = re.sub(r'[^a-z0-9]+', '-', norm(sb)).strip('-')
-        top = ''.join(f'<a class="pc" href="../p/{SL[j]}.html"><div class="pb"><div class="pimg" style="{spr(j)}"></div></div><div class="pi"><span class="b">{esc(P[j][1] or "")}</span><span class="n">{esc(P[j][0])}</span></div></a>' for j in L[:5])
+        top = ''.join(f'<a class="pc" href="../p/{SL[j]}.html"><div class="pb"><div class="pimg" style="{spr(j)}"></div></div><div class="pi"><span class="b">{esc(niceB(P[j]))}</span><span class="n">{esc(nice(P[j]))}</span></div></a>' for j in L[:5])
         Lp = [j for j in L if HP(j)]; Ln = [j for j in L if not HP(j) and j not in X]
-        top = ''.join(f'<a class="pc" href="../p/{SL[j]}.html"><div class="pb"><div class="pimg" style="{spr(j)}"></div></div><div class="pi"><span class="b">{esc(P[j][1] or "")}</span><span class="n">{esc(P[j][0])}</span></div></a>' for j in Lp[:5])
-        rest = ''.join(f'<li><a href="../p/{SL[j]}.html">{esc(P[j][0])}</a></li>' for j in Lp[5:]) + ''.join(f'<li><a href="../#p-{j}">{esc(P[j][0])}</a>{" <small>Cód. " + esc(KC[j]) + "</small>" if KC[j] else ""}</li>' for j in Ln)
+        top = ''.join(f'<a class="pc" href="../p/{SL[j]}.html"><div class="pb"><div class="pimg" style="{spr(j)}"></div></div><div class="pi"><span class="b">{esc(niceB(P[j]))}</span><span class="n">{esc(nice(P[j]))}</span></div></a>' for j in Lp[:5])
+        rest = ''.join(f'<li><a href="../p/{SL[j]}.html">{esc(nice(P[j]))}</a></li>' for j in Lp[5:]) + ''.join(f'<li><a href="../#p-{j}">{esc(nice(P[j]))}</a>{" <small>Cód. " + esc(KC[j]) + "</small>" if KC[j] else ""}</li>' for j in Ln)
         secs.append(f'<section class="sub" id="{anchor}"><h2>{esc(sb)} <small style="font-size:.5em;color:var(--muted)">{len(L)}</small></h2><div class="grid">{top}</div>{f"<ul class=links>{rest}</ul>" if rest else ""}</section>')
     subnav = ''.join(f'<a href="#{re.sub(r"[^a-z0-9]+", "-", norm(SUBS[r][k])).strip("-")}">{esc(SUBS[r][k])} ({len(L)})</a>' for k, L in order)
     ld = {"@context": "https://schema.org", "@type": "CollectionPage", "name": rub, "url": url, "description": mdesc}
