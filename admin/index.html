@@ -60,6 +60,7 @@ details summary{cursor:pointer;font-weight:700}
  <button role="tab" data-t="cat" aria-selected="false">Categorías</button>
  <button role="tab" data-t="vend" aria-selected="false">Vendedores</button>
  <button role="tab" data-t="redes" aria-selected="false">Redes</button>
+ <button role="tab" data-t="env" aria-selected="false">Envíos</button>
 </div></div>
 
 <main>
@@ -109,6 +110,28 @@ details summary{cursor:pointer;font-weight:700}
  <div class="card"><h3 style="margin-top:0">Redes sociales</h3><p class="muted">Pegá el link de cada perfil. Si lo dejás vacío, no aparece en la web.</p>
   <div id="redes"></div></div>
 </section>
+
+<section id="t-env" hidden>
+ <div class="card">
+  <h3 style="margin-top:0">Cotizar un envío</h3>
+  <p class="muted">Usa solo los vehículos y costos que cargaste abajo. Nada se inventa: si falta un dato, el vehículo no se cotiza.</p>
+  <div class="row"><div style="flex:3 1 260px"><label for="e-dest">Dirección de la obra</label><input id="e-dest" placeholder="Ej.: San Martín 1200, Godoy Cruz"></div><div><label for="e-km">Distancia de ida (km)</label><input id="e-km" type="number" min="0" step="0.1" inputmode="decimal"></div><div style="flex:0 0 auto"><button class="btn l" id="e-calckm">Calcular km</button></div></div>
+  <p class="muted" id="e-kmnote"></p>
+  <h4>Qué se lleva</h4>
+  <div style="overflow-x:auto"><table><thead><tr><th>Descripción</th><th>Cant.</th><th>Peso c/u (kg)</th><th>Largo (m)</th><th>Ancho (m)</th><th>Alto (m)</th><th></th></tr></thead><tbody id="e-items"></tbody></table></div>
+  <button class="btn sm l" id="e-additem" style="margin-top:8px">+ Agregar bulto</button>
+  <p id="e-tot" class="muted"></p>
+  <div id="e-res"></div>
+ </div>
+ <div class="card">
+  <h3 style="margin-top:0">Tus vehículos y costos</h3>
+  <p class="muted">Cargá lo que te cuesta cada vehículo (propio o flete). Se guarda al publicar y no se muestra en la web.</p>
+  <label for="e-orig">Dirección del depósito (desde donde salen los envíos)</label><input id="e-orig" placeholder="Calle, número y departamento">
+  <div class="row"><div><label for="e-marg">Ganancia sobre el costo del envío (%)</label><input id="e-marg" type="number" min="0" step="1" inputmode="decimal"></div><div><label for="e-iyv">Kilómetros</label><select id="e-iyv"><option value="1">Contar ida y vuelta</option><option value="0">Contar solo la ida</option></select></div><div><label for="e-red">Redondear el precio a</label><select id="e-red"><option value="1">$ 1</option><option value="100">$ 100</option><option value="500">$ 500</option><option value="1000">$ 1.000</option></select></div></div>
+  <div style="overflow-x:auto;margin-top:12px"><table><thead><tr><th>Usar</th><th>Vehículo</th><th>Carga máx (kg)</th><th>Volumen máx (m³)</th><th>Largo máx (m)</th><th>Salida fija ($)</th><th>$ por km</th><th>Carga y descarga ($)</th><th></th></tr></thead><tbody id="e-veh"></tbody></table></div>
+  <button class="btn sm l" id="e-addveh" style="margin-top:8px">+ Agregar vehículo</button>
+ </div>
+</section>
 </main>
 
 <div class="pub" id="pub" hidden><span>Tenés <b id="pubn">0</b> cambios sin publicar</span><button class="btn l sm" id="undo">Descartar</button><button class="btn y" id="pubgo">Publicar en la web</button></div>
@@ -124,6 +147,7 @@ const $=id=>document.getElementById(id);
 const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const norm=t=>String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
 const slug=t=>norm(t).replace(/[^a-z0-9]+/g,'').slice(0,30);
+const ENV0={origen:'',margen:null,idaVuelta:1,redondeo:100,vehiculos:[{nombre:'Moto',activo:true},{nombre:'Auto',activo:true},{nombre:'Camioneta',activo:true},{nombre:'Camión',activo:true}]};let ENV=null,ITEMS=[{d:'',q:1}];
 let TOKEN='',HEAD='',CAT=null,AJ=null,IDX='',R=[],RD=[],DESC={},PEND={},FOTOS={},BLOB={},EDIT=new Set();
 function toast(t,ms){const e=$('toast');e.textContent=t;e.hidden=false;clearTimeout(e._t);e._t=setTimeout(()=>e.hidden=true,ms||3500)}
 function lsG(k){try{return localStorage.getItem(k)}catch(e){return null}}function lsS(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}}
@@ -141,7 +165,7 @@ async function entrar(t){TOKEN=t;$('lerr').textContent='';
   const u=await gh('https://api.github.com/user');lsS('mdz_admin_tok',t);$('whoname').textContent='Conectado como '+u.login;await cargar()}
  catch(e){TOKEN='';lsS('mdz_admin_tok',null);$('loading').hidden=true;$('login').hidden=false;$('lerr').textContent=e.status===401?'La sesión venció o la clave no es válida. Volvé a entrar.':(e.message||'No se pudo entrar.')}}
 $('gh').onclick=()=>{
- const w=window.open('https://api.netlify.com/auth?provider=github&site_id='+encodeURIComponent(location.hostname)+'&scope=public_repo','mdzauth','width=600,height=700');
+ const w=window.open('https://api.netlify.com/auth?provider=github&site_id=6109f9cf-1f4d-456a-9094-1cbdd65b8711&scope=public_repo','mdzauth','width=600,height=700');
  if(!w){$('lerr').textContent='Permití las ventanas emergentes para entrar.';return}
  function on(e){if(e.origin!=='https://api.netlify.com')return;const d=String(e.data||'');
   if(d==='authorizing:github'){w.postMessage(d,e.origin);return}
@@ -154,7 +178,8 @@ $('logout').onclick=()=>{if(Object.keys(PEND).length&&!confirm('Tenés cambios s
 /* ---------- Carga ---------- */
 async function cargar(){$('loading').hidden=false;
  const ref=await gh('/git/ref/heads/'+BR);HEAD=ref.object.sha;
- const [c,a,ix]=await Promise.all([raw('catalogo.json'),raw('ajustes.json'),raw('index.html')]);
+ const [c,a,ix,ev]=await Promise.all([raw('catalogo.json'),raw('ajustes.json'),raw('index.html'),raw('envios.json').catch(()=>null)]);
+ ENV=ev?JSON.parse(ev):JSON.parse(JSON.stringify(ENV0));
  CAT=JSON.parse(c);CAT.c=CAT.c||[];CAT.f=CAT.f||{};CAT.x=CAT.x||[];AJ=JSON.parse(a);IDX=ix;
  R=JSON.parse(IDX.match(/^const R=(\[.*\]);/m)[1]);RD=JSON.parse(IDX.match(/const RD=(\[.*?\]);/)[1]);
  PEND={};FOTOS={};EDIT=new Set();DESC={};
@@ -163,7 +188,7 @@ async function cargar(){$('loading').hidden=false;
  tab('prod');buscar();pubbar()}
 
 /* ---------- Tabs ---------- */
-function tab(t){document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.t===t));['prod','cat','vend','redes'].forEach(k=>$('t-'+k).hidden=k!==t);
+function tab(t){document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.t===t));['prod','cat','vend','redes','env'].forEach(k=>$('t-'+k).hidden=k!==t);if(t==='env')drawEnv();
  if(t==='cat')drawCats();if(t==='vend')drawVend();if(t==='redes')drawRedes()}
 $('tabs').onclick=e=>{const b=e.target.closest('button[data-t]');if(b)tab(b.dataset.t)};
 
@@ -276,6 +301,48 @@ const RN=[['instagram','Instagram'],['facebook','Facebook'],['tiktok','TikTok'],
 function drawRedes(){AJ.redes=AJ.redes||{};$('redes').innerHTML=RN.map(([k,n])=>`<label for="rd-${k}">${n}</label><input id="rd-${k}" data-red="${k}" type="url" placeholder="https://..." value="${esc(AJ.redes[k]||'')}">`).join('')}
 $('redes').addEventListener('change',e=>{const t=e.target;if(!t.dataset.red)return;const v=t.value.trim();if(v&&!/^https:\/\/\S+$/.test(v)){toast('El link tiene que empezar con https://');return}AJ.redes[t.dataset.red]=v;mark('ajustes.json');toast('Guardado. Tocá "Publicar en la web" cuando termines.')});
 
+
+/* ---------- Envíos: cotizador con los costos del dueño ---------- */
+const num=v=>{if(v===''||v==null)return null;const n=+String(v).replace(',','.');return isFinite(n)?n:null};
+const ars=n=>'$ '+Math.round(n).toLocaleString('es-AR');
+const VF=[['kg','Carga máx (kg)'],['m3','Volumen máx (m³)'],['largo','Largo máx (m)'],['base','Salida fija ($)'],['km','$ por km'],['carga','Carga y descarga ($)']];
+function drawEnv(){if(!ENV)return;$('e-orig').value=ENV.origen||'';$('e-marg').value=ENV.margen??'';$('e-iyv').value=String(ENV.idaVuelta??1);$('e-red').value=String(ENV.redondeo||100);
+ $('e-veh').innerHTML=ENV.vehiculos.map((v,i)=>`<tr><td><input type="checkbox" data-vi="${i}" data-f="activo" ${v.activo?'checked':''} style="width:auto"></td><td><input data-vi="${i}" data-f="nombre" value="${esc(v.nombre||'')}" style="min-width:110px"></td>${VF.map(([f])=>`<td><input data-vi="${i}" data-f="${f}" type="number" min="0" step="any" inputmode="decimal" value="${v[f]??''}" style="min-width:90px"></td>`).join('')}<td><button class="btn sm r" data-vx="${i}">Quitar</button></td></tr>`).join('');
+ drawItems();calcEnv()}
+function drawItems(){$('e-items').innerHTML=ITEMS.map((x,i)=>`<tr><td><input data-ii="${i}" data-f="d" value="${esc(x.d||'')}" placeholder="Ej.: caños 3/4 x 4 m" style="min-width:160px"></td>${['q','kg','l','a','h'].map(f=>`<td><input data-ii="${i}" data-f="${f}" type="number" min="0" step="any" inputmode="decimal" value="${x[f]??''}" style="min-width:70px"></td>`).join('')}<td><button class="btn sm l" data-ix="${i}">×</button></td></tr>`).join('')}
+function calcEnv(){if(!ENV)return;const km=num($('e-km').value);let kg=0,m3=0,L=0,falta=false;
+ ITEMS.forEach(x=>{const q=num(x.q)||0;if(!q)return;const w=num(x.kg),l=num(x.l),a=num(x.a),h=num(x.h);if(w==null)falta=true;kg+=q*(w||0);if(l!=null&&a!=null&&h!=null)m3+=q*l*a*h;if(l!=null)L=Math.max(L,l)});
+ $('e-tot').textContent=`Total: ${kg.toLocaleString('es-AR')} kg · ${m3.toLocaleString('es-AR',{maximumFractionDigits:3})} m³ · bulto más largo ${L.toLocaleString('es-AR')} m`+(falta?' (hay bultos sin peso)':'');
+ if(km==null){$('e-res').innerHTML='<p class="muted">Poné la distancia (o tocá "Calcular km") para cotizar.</p>';return}
+ const kmT=km*(+ENV.idaVuelta?2:1),mg=num(ENV.margen)||0,red=+ENV.redondeo||1;
+ const rows=ENV.vehiculos.filter(v=>v.activo).map(v=>{const b=num(v.base),pk=num(v.km),c=num(v.carga)||0;
+  if(b==null&&pk==null)return {v,ok:false,why:'Faltan costos'};
+  const why=[];if(num(v.kg)!=null&&kg>num(v.kg))why.push('se pasa de peso');if(num(v.m3)!=null&&m3>num(v.m3))why.push('se pasa de volumen');if(num(v.largo)!=null&&L>num(v.largo))why.push('bulto muy largo');
+  const costo=(b||0)+kmT*(pk||0)+c,precio=Math.ceil(costo*(1+mg/100)/red)*red;return {v,ok:!why.length,why:why.join(', '),costo,precio}});
+ const best=rows.filter(r=>r.ok).sort((a,b)=>a.precio-b.precio)[0];
+ $('e-res').innerHTML=`<table style="margin-top:12px"><thead><tr><th>Vehículo</th><th>¿Entra?</th><th>Tu costo</th><th>Precio al cliente</th></tr></thead><tbody>${rows.map(r=>`<tr${r===best?' style="background:#FFF4CC"':''}><td><b>${esc(r.v.nombre||'')}</b>${r===best?' <span class="tag ok">Conviene</span>':''}</td><td>${r.ok?'Sí':esc(r.why)}</td><td>${r.costo!=null?ars(r.costo):'—'}</td><td>${r.precio!=null&&r.ok?'<b>'+ars(r.precio)+'</b>':'—'}</td></tr>`).join('')}</tbody></table>`+
+ (best?`<p style="margin-top:12px"><b>Para el presupuesto:</b> <span id="e-line">Envío en ${esc(best.v.nombre.toLowerCase())} (${km.toLocaleString('es-AR')} km): ${ars(best.precio)}</span> <button class="btn sm" id="e-copy">Copiar</button></p>`:'<p class="muted" style="margin-top:12px">Ningún vehículo cargado puede llevar este pedido con los datos actuales.</p>')}
+$('t-env').addEventListener('input',e=>{const t=e.target;
+ if(t.dataset.vi!=null){const v=ENV.vehiculos[+t.dataset.vi];v[t.dataset.f]=t.type==='checkbox'?t.checked:(t.type==='number'?num(t.value):t.value);mark('envios.json')}
+ else if(t.dataset.ii!=null){ITEMS[+t.dataset.ii][t.dataset.f]=t.type==='number'?num(t.value):t.value}
+ else if(t.id==='e-orig'){ENV.origen=t.value;ENV.origenLL=null;mark('envios.json')}
+ else if(t.id==='e-marg'){ENV.margen=num(t.value);mark('envios.json')}
+ calcEnv()});
+$('t-env').addEventListener('change',e=>{const t=e.target;if(t.id==='e-iyv'){ENV.idaVuelta=+t.value;mark('envios.json')}if(t.id==='e-red'){ENV.redondeo=+t.value;mark('envios.json')}if(t.type==='checkbox'&&t.dataset.vi!=null){ENV.vehiculos[+t.dataset.vi].activo=t.checked;mark('envios.json')}calcEnv()});
+$('t-env').addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;
+ if(b.id==='e-addveh'){ENV.vehiculos.push({nombre:'',activo:true});mark('envios.json');drawEnv()}
+ if(b.dataset.vx!=null){ENV.vehiculos.splice(+b.dataset.vx,1);mark('envios.json');drawEnv()}
+ if(b.id==='e-additem'){ITEMS.push({d:'',q:1});drawItems();calcEnv()}
+ if(b.dataset.ix!=null){ITEMS.splice(+b.dataset.ix,1);if(!ITEMS.length)ITEMS.push({d:'',q:1});drawItems();calcEnv()}
+ if(b.id==='e-copy'){const t=$('e-line').textContent;try{await navigator.clipboard.writeText(t);toast('Copiado')}catch(x){prompt('Copiá:',t)}}
+ if(b.id==='e-calckm'){const d=$('e-dest').value.trim();if(!d){toast('Escribí la dirección de la obra');return}if(!ENV.origen){toast('Cargá primero la dirección del depósito (abajo)');return}
+  $('e-kmnote').textContent='Buscando las direcciones en el mapa…';
+  try{const geo=async q=>{const r=await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=ar&q='+encodeURIComponent(/mendoza/i.test(q)?q:q+', Mendoza'));const j=await r.json();if(!j[0])throw new Error('No encontré "'+q+'"');return [+j[0].lon,+j[0].lat,j[0].display_name]};
+   const o=ENV.origenLL||await geo(ENV.origen);ENV.origenLL=o;const de=await geo(d);
+   const r=await fetch(`https://router.project-osrm.org/route/v1/driving/${o[0]},${o[1]};${de[0]},${de[1]}?overview=false`);const j=await r.json();if(!j.routes||!j.routes[0])throw new Error('No encontré una ruta');
+   const km=Math.round(j.routes[0].distance/100)/10;$('e-km').value=km;$('e-kmnote').textContent=`Ruta por calle: ${km.toLocaleString('es-AR')} km hasta ${de[2].split(',').slice(0,3).join(',')}. Revisá que sea la dirección correcta.`;calcEnv()}
+  catch(x){$('e-kmnote').textContent=(x.message||'No se pudo calcular')+'. Podés poner los km a mano (los ves en Google Maps).'}}});
+
 /* ---------- Publicar (un solo cambio en GitHub con todo) ---------- */
 $('pubgo').onclick=async()=>{const b=$('pubgo');b.disabled=true;b.textContent='Publicando…';
  try{const ref=await gh('/git/ref/heads/'+BR);const now=ref.object.sha;const paths=Object.keys(PEND).map(k=>k==='cat'?'catalogo.json':k);
@@ -285,6 +352,7 @@ $('pubgo').onclick=async()=>{const b=$('pubgo');b.disabled=true;b.textContent='P
   if(PEND.cat){const c=Object.assign({},CAT);c.x=[...new Set(CAT.x)].sort((a,b)=>a-b);if(!c.x.length)delete c.x;if(!Object.keys(c.f).length)delete c.f;files.push(['catalogo.json',JSON.stringify(c),'utf-8'])}
   Object.keys(PEND).filter(k=>k.startsWith('d/')).forEach(k=>files.push([k,JSON.stringify(DESC[k]),'utf-8']));
   if(PEND['ajustes.json'])files.push(['ajustes.json',JSON.stringify(AJ,null,2)+'\n','utf-8']);
+  if(PEND['envios.json'])files.push(['envios.json',JSON.stringify(ENV,null,2)+'\n','utf-8']);
   if(PEND['index.html']){let s=IDX.replace(/^const R=(\[.*\]);/m,()=> 'const R='+JSON.stringify(R)+';').replace(/const RD=(\[.*?\]);/,()=> 'const RD='+JSON.stringify(RD)+';');files.push(['index.html',s,'utf-8'])}
   Object.keys(FOTOS).filter(p=>Object.values(CAT.f).includes(p)).forEach(p=>files.push([p,FOTOS[p],'base64']));
   const tree=[];for(const [path,content,enc] of files){const bl=await gh('/git/blobs',{method:'POST',body:{content,encoding:enc}});tree.push({path,mode:'100644',type:'blob',sha:bl.sha})}

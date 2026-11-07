@@ -27,7 +27,7 @@ open(ix, 'w', encoding='utf-8').write(s)
 subprocess.run([sys.executable, os.path.join(SITE, 'tools', 'gen_seo.py'), SITE, BASE], check=True)
 # publicar solo lo que corresponde
 DIST = os.path.join(SITE, 'dist')
-NO = {'dist', 'tools', 'functions', '.git', '.impeccable', 'PRODUCT.md', 'DESIGN.md', 'netlify.toml', '.gitattributes', '.gitignore', 'wrangler.toml', 'node_modules'}
+NO = {'dist', 'tools', 'functions', '.git', '.impeccable', 'PRODUCT.md', 'DESIGN.md', 'netlify.toml', '.gitattributes', '.gitignore', 'wrangler.toml', 'node_modules', 'envios.json'}
 shutil.rmtree(DIST, ignore_errors=True); os.makedirs(DIST)
 for n in os.listdir(SITE):
     if n in NO: continue
