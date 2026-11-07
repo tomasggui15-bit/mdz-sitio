@@ -1,2 +1,6 @@
 https://mdzmaterialesdeconstruccion.netlify.app/*  https://materialesmdz.com/:splat  301!
 /v/:slug  /?v=:slug  302
+/PRODUCT.md  /404.html  404!
+/DESIGN.md  /404.html  404!
+/.impeccable/*  /404.html  404!
+/tools/*  /404.html  404!
