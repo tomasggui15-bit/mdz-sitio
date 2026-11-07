@@ -32,6 +32,7 @@ window.MDZ_AJUSTES=fetch('/ajustes.json',{cache:'no-cache'}).then(function(r){re
     var v=actual();var q=new URLSearchParams((m[2]||'').slice(1));var t=q.get('text')||'Hola MDZ, quiero pedir un presupuesto.';
     if(v.s&&t.indexOf('Código de vendedor')<0)t+='\n\nCódigo de vendedor: '+v.s.toUpperCase();
     return {url:'https://wa.me/'+v.tel+'?text='+encodeURIComponent(t),v:v}}
+  window.MDZ_wa=function(href){var x=document.createElement('a');x.setAttribute('href',href);var r=reescribir(x);if(r){try{window.umami&&window.umami.track('whatsapp_vendedor',{vendedor:r.v.s||'sin-vendedor'})}catch(e){}}return r?r.url:href};
   document.addEventListener('click',function(e){
     if(e.defaultPrevented||e.button!==0)return;
     var a=e.target.closest&&e.target.closest('a[href^="https://wa.me/"]');if(!a)return;

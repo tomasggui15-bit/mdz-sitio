@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-"""Armado automático en Netlify (corre en cada publicación):
+"""Armado automático (Cloudflare Pages o Netlify; corre en cada publicación):
 1) recalcula cantidades por categoría en index.html (sin productos ocultos),
 2) cambia la versión de los datos para que nadie vea datos viejos,
 3) regenera las páginas de Google (p/, r/, sitemap).
-La dirección del sitio sale de la variable URL de Netlify (sirve también con dominio propio)."""
-import json, os, re, subprocess, sys, time, collections
+La dirección del sitio sale de SITE_URL (o URL en Netlify); por defecto https://materialesmdz.com.
+4) copia lo publicable a dist/ (sin herramientas ni archivos internos)."""
+import json, os, re, shutil, subprocess, sys, time, collections
 SITE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BASE = (os.environ.get('URL') or 'https://mdzmaterialesdeconstruccion.netlify.app').rstrip('/')
+BASE = (os.environ.get('SITE_URL') or os.environ.get('URL') or 'https://materialesmdz.com').rstrip('/')
+if 'netlify.app' in BASE or 'pages.dev' in BASE: BASE = 'https://materialesmdz.com'
 ix = os.path.join(SITE, 'index.html')
 s = open(ix, encoding='utf-8').read()
 C = json.load(open(os.path.join(SITE, 'catalogo.json'), encoding='utf-8'))
@@ -23,4 +25,12 @@ s = re.sub(r"const DV='\d+'", "const DV='%s'" % time.strftime('%Y%m%d%H%M'), s, 
 s = s.replace('https://mdzmaterialesdeconstruccion.netlify.app', BASE)  # dominio propio automático
 open(ix, 'w', encoding='utf-8').write(s)
 subprocess.run([sys.executable, os.path.join(SITE, 'tools', 'gen_seo.py'), SITE, BASE], check=True)
+# publicar solo lo que corresponde
+DIST = os.path.join(SITE, 'dist')
+NO = {'dist', 'tools', 'functions', '.git', '.impeccable', 'PRODUCT.md', 'DESIGN.md', 'netlify.toml', '.gitattributes', '.gitignore', 'wrangler.toml', 'node_modules'}
+shutil.rmtree(DIST, ignore_errors=True); os.makedirs(DIST)
+for n in os.listdir(SITE):
+    if n in NO: continue
+    a, b = os.path.join(SITE, n), os.path.join(DIST, n)
+    (shutil.copytree if os.path.isdir(a) else shutil.copy2)(a, b)
 print('listo', BASE, sum(cr.values()), 'productos visibles')
